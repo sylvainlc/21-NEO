@@ -1,0 +1,80 @@
+\subsection{Continuous case}
+Consider an open set $\Omega \subset \mathbb{R}^d$, and define a vector field $b:\mathbb{R}^d \to \mathbb{R}^d$. 
+Define $(\phi_t)_{t \in \mathbb{R}}$ the semi group associated to the ODE on $\mathbb{R}^d$:
+\begin{equation}
+\label{eq:ODE}
+    \dot{X}(t, {x})=b(x(t, x)) \quad X(0, x)=x \eqsp .
+\end{equation}
+
+We assume that $(\phi_t)_{t \in \mathbb{R}}$ is a flow of $\mathrm{C}^\infty$-diffeomorphisms on $\mathbb{R}^{d}$. 
+Define as well forward and backward explosion times $\tau^{+}(x)$ and $\tau^{-}(x)$ linked to the maximal solution of \eqref{eq:ODE} on $\Omega$: for any point $x \in \Omega$, 
+\begin{align}
+    &\tau^+(x) = \sup\{t\geq0\,,\,  \forall  s \in [0,t]\,,\, \phi_s(x) \in \Omega\} \eqsp,\\
+    &\tau^-(x) = \inf\{t\leq0\,,\,  \forall s \in [t,0]\,,\, \phi_s(x) \in \Omega\}\eqsp.
+\end{align} 
+%By convention, $\inf(\varnothing) = 0$ and $\sup(\varnothing) = 0$. 
+For $x \notin \Omega$, we write $\tau^+(x) =\tau^-(x)=0$
+
+%We define the semi group $\{x \to \phi_t(x), t \in \mathbb{R}\}$ such that, for any $x \in \mathbb{R}^d$, $\phi_{0}(x) = x$ and $\dot{\phi}_t(x) = b(\phi_t(x))$ if $\phi_t(x) \in \Omega$ and $\dot{\phi}_t(x) = 0$ else.
+
+
+Denote by $\Jac{b}$ the Jacobian matrix of function $b$ and by $\Jac{\phi_t}$ the Jacobian matrix of the flow $x \mapsto \phi_t (x)$ at time $t$.
+we can write $\dJac{\phi_t}(x) =\Jac{b}(\phi_t(x)) \Jac{\phi_t}(x)$. 
+The matrix $\Jac{\phi_t}(x)$ is solution of the linear ODE 
+$$\left\{\begin{matrix}\dJac{\phi_t}(x) = \Jac{b}(\phi_t(x)) \Jac{\phi_t}(x)
+\\ U_0 = \Id_d
+\end{matrix}\right.$$ 
+where $\Id_d$ is the identity matrix on $\mathbb{R}^{d}$.
+We are interested in the determinant of $\Jac{\phi_t}$. 
+
+By Jacobi's formula, we have 
+\begin{align*}
+    \frac{\rmd}{\rmd t} \det \Jac{\phi_t}(x) &= \Tr\left(\adj(\Jac{\phi_t}(x)) \dJac{\phi_t}(x)\right)\\
+    &= \tr\left(^t\com(\Jac{\phi_t}(x))  \Jac{b}(\phi_t(x)) \Jac{\phi_t}(x)\right)\\
+    &= \tr\left( \Jac{b}(\phi_t(x)) \det(\Jac{\phi_t}(x)) I_d\right))\\
+    &= \tr\left( \Jac{b}(\phi_t(x))\right) \det(\Jac{\phi_t}(x)) = \nabla \cdot b(\phi_t(x)) \det(\Jac{\phi_t}(x)) \eqsp.
+\end{align*}
+
+And we have finally $ \det \Jac{\phi_0}(x) = 1$, for any $x$. Hence, $\det \Jac{\phi_t} (x) = \exp \left(\int_{0}^{t} \nabla \cdot b(\phi_s(x)) d s\right)$.
+
+
+Consider a distribution with density $\rho$ w.r.t. the Lebesgue measure on $\Omega$. We assume that the function $x \to \tau^+(x)$ is measurable and integrable w.r.t. $\rho$.
+Write $\rho(\tau^{+}) = \int_\Omega \tau^+(x) \rho(x) \rmd x$. 
+Define, for a positive measurable function $\varphi:\Omega\mapsto \mathbb{R}$:
+\begin{align*}
+ \rho_{\mathrm{ne}}^{+}(\varphi) &=\frac{1}{\rho(\tau^{+})} \int_{\Omega} \int_{0}^{\tau^{+}({x})} \varphi(\phi_t(x))\rho({x})  \rmd t \rmd x 
+\end{align*}
+%\rho_{\mathrm{ne}}^{+}(\varphi)    \rho(\tau^{+})
+%Where $\frac{1}{\rho(\tau^{+})}$ is a normalising constant which will be explicitly given later. 
+We can write
+\begin{align*}
+\rho_{\mathrm{ne}}^{+}(\varphi)  &=\frac{1}{\rho(\tau^{+})} \int_{\mathbb{R}^{d}} \int_{0}^{\infty}\1\{t< \tau^{+}( {x})\}\indi{\Omega}(x) \varphi(\phi_t(x))  \rho( {x}) \rmd t \rmd {x} \\
+\end{align*}
+Moreover, by definition of $\tau^{+}( {x})$, we have $\{0\leq t< \tau^{+}( {x})\}\cap\{x \in \Omega\} = \bigcap_{s \in [0,t]}\{\phi_s(x) \in \Omega\}$.
+%We have  $\1\{t\leq \tau^{+}( {x})\}\indi{\Omega}(x)\leq \indi{\Omega}(x)\indi{\Omega}(\phi_t(x))$ as $ x\in \Omega, t\leq \tau^{+}( {x})$ implies $\phi_t(x)\in \Omega$. If we suppose as well that for any $t>\tau^{+}( {x})$, $\phi_t(x)\notin \Omega$, then we can write $\1\{t\leq \tau^{+}( {x})\}\indi{\Omega}(x)= \indi{\Omega}(x)\indi{\Omega}(\phi_t(x))$, for $t\geq 0$.
+With the change of variable, using Fubini's theorem, $y = \phi_t(x)$, $\rmd x = |\Jac{\phi_{-t}}(y)| \rmd y$, 
+\begin{align*}
+\rho_{\mathrm{ne}}^{+}(\varphi)  &=\frac{1}{\rho(\tau^{+})} \int_{\mathbb{R}^{d}} \int_{0}^{\infty}\1\left\{\bigcap_{s \in [0,t]}\{\phi_s(\phi_{-t}(y)) \in \Omega\}\right\} \varphi(y) \rmd t \rho(\phi_{-t}(y)) |\Jac{\phi_{-t}}(y)| \rmd y\\
+&=\frac{1}{\rho(\tau^{+})} \int_{\mathbb{R}^{d}} \int_{0}^{\infty}\1\left\{\bigcap_{s \in [-t,0]}\{\phi_s(y) \in \Omega\}\right\} \varphi(y) \rmd t \rho(\phi_{-t}(y)) |\Jac{\phi_{-t}}(y)| \rmd y
+\end{align*}
+And we recognize here similarly $\bigcap_{s \in [-t,0]}\{\phi_s(y) \in \Omega\} = \{0\leq t < - \tau^-(y)\} \cap \{y \in \Omega\}$.
+\begin{align*}
+\rho_{\mathrm{ne}}^{+}(\varphi)  &=\frac{1}{\rho(\tau^{+})} \int_{\mathbb{R}^{d}} \int_{0}^{\infty}\1\{y \in \Omega\}\1\{t< - \tau^-(y)\} \varphi(y) \rmd t \rho(\phi_{-t}(y))|\Jac{\phi_{-t}}(y)|  \rmd y \\
+&= \frac{1}{\rho(\tau^{+})} \int_{\mathbb{R}^{d}} \int_{0}^{- \tau^{-}(y)}\indi{\Omega}(y)\varphi(y) \rmd t \rho(\phi_{-t}(y))|\Jac{\phi_{-t}}(y)|  \rmd y
+\end{align*}
+%and thus $$\rho_{\mathrm{ne}}^{+}(y)=\rho(\tau^{+})^{-1} \int_{\tau^{-}(y)}^{0} |\Jac{\phi_{t}}(y)|  \rho(\phi_{t}(y))\indi{\Omega}(y)d t\eqsp,$$ with $\rho(\tau^{+}) = \int_{\mathbb{R}^d}\int_{\tau^{-}(y)}^{0} |\Jac{\phi_{t}}(y)|  \rho(\phi_{t}(y))\indi{\Omega}(y)d t \rmd y$ ?  We would expect $\rho(\tau^{+}) = \int_{\mathbb{R}^d}\int_{0}^{\tau^+(y)} \rho(\phi_{t}(y))\indi{\Omega}(y)d t \rmd y$ -- it may be equal with the previous reasoning. 
+
+On the same way, we write
+\begin{align*}
+\rho_{\mathrm{ne}}^{-}(\varphi)  &=\frac{1}{-\rho(\tau^{-})} \int_{\Omega} \int_{\tau^{-}(x)}^{0} \varphi(\phi_t(x)) \rmd t \rho(x)  \rmd x \\
+& \equiv \int_{\Omega} \varphi(x) \rho_{\mathrm{ne}}^{-}(x)  \rmd x \\
+\rho_{\mathrm{ne}}^{-}(y) &=-\rho(\tau^{-})^{-1} \int_{0}^{\tau^{+}(y)}|\Jac{\phi_{t}}(y)| \rho(\phi_t(y))\indi{\Omega}(y)\rmd t
+\end{align*}
+
+We can thus introduce the non equilibrium density and the average time $\rho(\tau) = \rho(\tau^{+}) - \rho(\tau^{-})$ :
+\begin{align}
+\rho_{\text {ne }}(y) &=\frac{\rho(\tau^{+}) \rho_{\text {ne }}^{+}(y)-\rho(\tau^{-}) \rho_{\text {ne }}^{-}(y)}{\rho(\tau)} \\
+&=\rho(\tau)^{-1} \int_{\tau^{-}(y)}^{\tau^{+}(y)}|\Jac{\phi_{t}}(y)| \rho(\phi_t(y))\indi{\Omega}(y)\rmd t
+\end{align}
+Moreover, we can write 
+$$\rho_{\mathrm{ne}}(\varphi) = \frac{\rho(\tau^{+}) \rho_{\mathrm{ne}}^+(\varphi)-\rho(\tau^{-}) \rho_{\mathrm{ne}}^-(\varphi)}{\rho(\tau)} = \frac{1}{\rho(\tau)} \int_{\Omega} \int_{\tau^{-}(x)}^{\tau^{+}(x)} \varphi(\phi_t(x)) \rmd t \rho(x) \rmd x$$

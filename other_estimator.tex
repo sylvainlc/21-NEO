@@ -1,0 +1,84 @@
+\section{Non-equilibrium Importance Sampling -- Other version}
+
+Assume we have a density $\rho$ w.r.t. Lebesgue on $\mathcal{X}=\mathbb{R}^{d}$ this time
+and a diffeomorphism $\Phi:\mathcal{X\rightarrow X}.$ We use the
+notation $\Phi^{k}:=\Phi\circ\Phi^{k-1}$ for $k\geq1$ and $\Phi^{0}=I_{d}$
+and similarly $\Phi^{-k}:=\Phi^{-1}\circ\Phi^{-(k-1)}$ for $k\leq0$.
+The push-forward measure is denoted
+\[
+\Phi_{\#}^{k}\rho(x):=\rho(\Phi^{-k}\left(x\right))|\det J\Phi^{-k}\left(x\right)|,
+\] 
+where $\det J\Phi^{-k}\left(x\right)$ is the determinant of the Jacobian matrix of $\Phi^{-k}$ evaluated at $x$. We define as previously for a given set $\Omega$
+\begin{align*}
+    &\tau^{+}(x)=\max\{k\geq1\,, \, \forall i\in \{0,\dots, k-1\}\,,\, \phi^{i}\left(x\right)\in \Omega\}\geq1 \eqsp,\\
+    &\tau^{-}(x)=\min\{k\leq-1\,, \, \forall i\in \{k+1,\dots,0\}\,,\, \phi^{i}\left(x\right)\in \Omega\}\leq-1
+\end{align*}
+
+%The idea of non-equilibrium IS is to apply the deterministic mapping $\Phi$ to a sample $X_{0}\sim\rho$ until a stopping time $\tau^{+}(X_{0})=\{\min k:\{k\geq0:\Phi^{k}\left(X_{0}\right)\notin \Omega\}\}\geq0$, respectively the deterministic mapping $\Phi^{-1}$ until $\tau^{-}(X_{0})=\{\max k:\{k\leq0:\Phi^{k}\left(X_{0}\right)\notin \Omega\}\}\leq0$.
+
+The goal is then to consider a non-equilibrium average of a quantity $\psi$ over a trajectory obtained by successive applications of $\Phi$, by 
+\begin{align}
+\label{eq:non-eq_average_our}
+    \rho_{\mathrm{ne}}(\psi) =  
+    \frac{1}{\rho(\tau)}\int_{x_0\in \mathbb{R}^{d}} 
+   \sum_{k=\tau^-(x_0)+1}^{\tau^+(x_0)-1}\psi(\Phi^k(x_0))\rho(\rmd x_0) 
+\end{align}
+
+We can thus introduce the importance distribution proportional at point $x$ to the sum of the pushforward measures both backward and forward until the stopping times:
+\begin{align*}
+\rho_{\mathrm{ne}}\left(\rmd x\right)= & \frac{\int_{x_0\in \mathbb{R}^{d}}\rho\left(\rmd x_{0}\right)\sum_{k=\tau^{-}\left(x_{0}\right)+1}^{\tau^{+}\left(x_{0}\right)-1}\delta_{\Phi^{k}(x_{0})}\left(\rmd x\right) }{\int_{x\in \mathbb{R}^d}\int_{x_0\in \mathbb{R}^{d}}\rho\left(\rmd x_{0}\right)\sum_{k=\tau^{-}\left(x_{0}\right)+1}^{\tau^{+}\left(x_{0}\right)-1}\delta_{\Phi^{k}(x_{0})}\left(\rmd x\right)}\\
+= & \frac{\int\rho\left(\rmd x_{0}\right)\sum_{k=\tau^{-}\left(x_{0}\right)+1}^{\tau^{+}\left(x_{0}\right)-1}\delta_{\Phi^{k}(x_{0})}\left(\rmd x\right) }{\int\rho\left(\rmd x_{0}\right)\sum_{k=\tau^{-}\left(x_{0}\right)+1}^{\tau^{+}\left(x_{0}\right)-1}1 }\\
+= & \frac{\int\rho\left(\rmd x_{0}\right)\sum_{k=\tau^{-}\left(x_{0}\right)+1}^{\tau^{+}\left(x_{0}\right)-1}\delta_{\Phi^{k}(x_{0})}\left(\rmd x\right) }{\int\rho\left(\rmd x_{0}\right)(\tau^{+}\left(x_{0}\right) - \tau^{-}\left(x_{0}\right) +1)}\\
+\end{align*}
+It requires obviously that $\int\rho\left(\rmd x_{0}\right)(\tau^{+}\left(x_{0}\right) - \tau^{-}\left(x_{0}\right) +1)< +\infty$. Let us assume this, and denote $\rho(\tau)=\int\rho\left(\rmd x_{0}\right)(\tau^{+}\left(x_{0}\right) - \tau^{-}\left(x_{0}\right) +1) $. 
+Moreover, 
+\begin{align*}
+    \rho_{\mathrm{ne}}(\psi) &= \int_{x\in \mathbb{R}^{d}} \psi(x) \rho_{\mathrm{ne}}\left(\rmd x\right) \\
+    &=  \frac{1}{\rho(\tau)} \int_{x\in \mathbb{R}^{d}} \int_{x_0\in \mathbb{R}^{d}} \rho(\rmd x_0) \sum_{k=\tau^{-}\left(x_{0}\right)+1}^{\tau^{+}\left(x_{0}\right)-1} \psi(x)\delta_{\Phi^{k}(x_{0})}\left(\rmd x\right)\\
+    &=  \frac{1}{\rho(\tau)}\int_{x_0\in \mathbb{R}^{d}} \rho(\rmd x_0) \sum_{k=\tau^{-}\left(x_{0}\right)+1}^{\tau^{+}\left(x_{0}\right)-1} \psi(\Phi^{k}(x_{0}))
+\end{align*}
+And we retrieve \eqref{eq:non-eq_average_our}. Consider now 
+\begin{align*}
+    S_{\mathrm{ne}}=\int_{x_0\in\mathbb{R}^{d}}\rho\left(\rmd x_{0}\right)\sum_{k=\tau^{-}\left(x_{0}\right)+1}^{\tau^{+}\left(x_{0}\right)-1}\delta_{\Phi^{k}(x_{0})}\left(\rmd x\right)
+\end{align*}
+The Dirac measures takes non zero values for $\Phi^k(x_0)=x$. Then, the non-zero values are obtained for $x_0 \in \{\Phi^k(x), k \in \{\tau^{-}\left(x\right), \dots, \tau^{+}\left(x\right)\}\}$, and the integral can be written as a sum:
+\begin{align*}
+    S_{\mathrm{ne}}&=\sum_{x_0 \in \{\Phi^k(x), k \in \{\tau^{-}\left(x\right)+1, \dots, \tau^{+}\left(x\right)-1\}\}}\rho\left(x_{0}\right)\sum_{k=\tau^{-}\left(x_{0}\right)+1}^{\tau^{+}\left(x_{0}\right)-1}\delta_{\Phi^{k}(x_{0})}\left(\rmd x\right)\rmd x_0 \\
+    S_{\mathrm{ne}}&= \sum_{k=\tau^{-}\left(x\right)+1}^{\tau^{+}\left(x\right)-1}\Phi_{\#}^{k}\rho\left(\rmd x\right)
+\end{align*}
+and thus we have 
+\begin{alignat*}{1}
+\rho_{\mathrm{ne}}\left(\rmd x\right)= & \frac{\sum_{k=\tau^{-}\left(x\right)+1}^{\tau^{+}\left(x\right)-1}\Phi_{\#}^{k}\rho\left(\rmd x\right)}{\rho(\tau)}\\
+= & \frac{1}{\rho(\tau)}{\sum_{k=\tau^{-}\left(x\right)+1}^{\tau^{+}\left(x\right)-1}\rho(\Phi^{-k}\left(x\right))|\det J\Phi^{-k}\left(x\right)|\rmd x}\\
+= & \frac{1}{\rho(\tau)}{\sum_{k=-\tau^{+}\left(x\right)+1}^{-\tau^{-}\left(x\right)-1}\rho(\Phi^{k}\left(x\right))|\det J\Phi^{k}\left(x\right)|\rmd x}
+\end{alignat*}
+
+We are now interested in the quantity $\rho(\psi) = \rho_{\mathrm{ne}}\left(\frac{\psi \rho}{\rho_{\mathrm{ne}}}\right)$
+From \eqref{eq:non-eq_average_our}, we write:
+\begin{alignat*}{1}
+\int_{x\in \mathbb{R}^{d}}\psi\left(x\right)\rho\left(x\right)\rmd x= & \int_{x\in \mathbb{R}^{d}}\left\{\frac{\psi\left(x\right)\rho\left(x\right)}{\rho_{\mathrm{ne}}(x)}\right\}\rho_{\mathrm{ne}}(x)\rmd x\\
+= & \frac{1}{\rho(\tau)} \int_{x\in \mathbb{R}^{d}} \sum_{k=\tau^-(x)+1}^{\tau^+(x)-1}\left\{\frac{\psi\left(\Phi^k(x)\right)\rho\left(\Phi^k(x)\right)}{\rho_{\mathrm{ne}}(\Phi^k(x))}\right\} \rho(\rmd x) 
+\\
+=& \frac{1}{\rho(\tau)} \int_{x\in \mathbb{R}^{d}} \sum_{k=\tau^-(x)+1}^{\tau^+(x)-1}\frac{\psi\left(\Phi^k(x)\right)\rho\left(\Phi^k(x)\right)}{ \frac{1}{\rho(\tau)}\sum_{i=-\tau^{+}\left(\Phi^{k}(x)\right)+1}^{-\tau^{-}\left(\Phi^{k}(x)\right)-1}|\det J\Phi^{i}\left(\Phi^{k}(x)\right)|\rho(\Phi^{i}\circ\Phi^{k}(x))} \rho(\rmd x) 
+\end{alignat*}
+There is an issue there in the paper, as the integration is not done over $\Omega$ but $\mathbb{R}^{d}$ (which also ensures that if $\rho$ is indeed a density w.r.t. the Lebesgue measure on $\mathbb{R}^{d}$, $\rho_{\mathrm{ne}}$ is one as well). We avoid this by writing \eqref{eq:non-eq_average_our} on $\mathbb{R}^{d}$.
+Now we can further simplify the denominator in this expression 
+\begin{align*}
+  \sum_{i=-\tau^{+}\left(\Phi^{k}(x)\right)+1}^{-\tau^{-}\left(\Phi^{k}(x)\right)-1}|\det J\Phi^{i}\left(\Phi^{k}(x)\right)|\rho(\Phi^{i+k}(x))
+ & =\frac{1}{|\det J\Phi^{k}\left(x)\right)|}\sum_{i=-\tau^{+}\left(\Phi^{k}(x)\right)+1}^{-\tau^{-}\left(\Phi^{k}(x)\right)-1}|\det J\Phi^{i+k}\left(x)\right)|\rho(\Phi^{i+k}(x))\\
+ & =\frac{1}{|\det J\Phi^{k}\left(x)\right)|}\sum_{j=-\tau^{+}\left(\Phi^{k}(x)\right)+k+1}^{-\tau^{-}\left(\Phi^{k}(x)\right)+k-1}|\det J\Phi^{j}\left(x)\right)|\rho(\Phi^{j}(x))\\
+ & =\frac{1}{|\det J\Phi^{k}\left(x)\right)|}\sum_{j=-\tau^{+}\left(x\right)+1}^{-\tau^{-}\left(x\right)-1}|\det J\Phi^{j}\left(x)\right)|\rho(\Phi^{j}(x))
+\end{align*}
+where we have used in the paper $\tau^{+}\left(\Phi^{k}(x)\right)=\tau^{+}(x)-k$
+and $\tau^{-}\left(\Phi^{k}(x)\right)=\tau^{-}\left(x\right)-k$. Here we use in the last line once more the definition
+of the stopping times as well as the identity 
+\[
+|\det J\Phi^{i}\left(\Phi^{k}(x)\right)|=\frac{|\det J\Phi^{i+k}\left(x)\right)|}{|\det J\Phi^{k}\left(x)\right)|}.
+\]
+Hence 
+\begin{align}
+\label{eq:non-eq_estimator}
+\int_{x\in \mathbb{R}^{d}}\psi\left(x\right)\rho\left(x\right)\rmd x=&  
+\int_{x\in \mathbb{R}^{d}} \frac{\sum_{k=\tau^-(x)+1}^{\tau^+(x)-1}\psi\left(\Phi^k(x)\right)|\det J\Phi^{k}\left(x)\right)|\rho\left(\Phi^k(x)\right)}{\sum_{j=-\tau^{+}\left(x\right)+1}^{-\tau^{-}\left(x\right)-1}|\det J\Phi^{j}\left(x)\right)|\rho(\Phi^{j}(x))} \rho(\rmd x) 
+\end{align}
+

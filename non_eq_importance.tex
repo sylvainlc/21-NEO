@@ -1,0 +1,431 @@
+Consider a distribution $\rho$ on $\rset^{d}$ 
+%with support $\mso$ 
+and a family of $\rmC^1$-diffeomorphisms
+$\{\transfo_k:\rset^{d}\to \rset^{d}\}_{k\in\nsets}$. 
+%We stress that no assumption on
+%$\mso$ is necessary and that our setting includes the case $\mso=\rset^d$. However, considering general domains $\mso$ allows us
+%in some situations to ensure variance reduction of our new IS
+%estimator and to take into account prior knowledge on $\rho$.  
+We present first our IFIS method to construct an unbiased
+estimator of $\int f(x) \rho(x) \rmd x$, for any function $f:\rset^{d}\to \rset$. Second, we propose a specific
+instance of this methodology for computing $Z$ and
+approximating $\pi$ based on a dissipative Hamiltonian dynamics.
+% we not restrict our study to density $\rho$ of
+% the form \eqref{eq:normalizingconstant}.  Although the target $\pi$ in
+% \eqref{eq:targetextended} is defined on $\mathbb{R}^{2d}$, we consider
+% its restriction to some set $\mso \subset \rset^{d}$ such that
+% \begin{equation}
+% Z_{\mso}=\int_{\mso} L(q) \rho(q, p) \rmd q \rmd p \approx Z
+% \end{equation}
+% and sampling from the density $\rho_\mso(x) \propto \rho(x) \mathbb{I}(x \in \mso)$ can be achieved efficiently by rejection; e.g. select $\mso=\{x\in \mathbb{R}^{d}: 10^{-7}<H(x)<10^{10}\}$ **rewrite***. We present in this section how to obtain an unbiased estimator of $Z_{\mso}$.
+
+
+\subsection{Integration using non-equilibrium paths} \label{sec:estimator}
+
+ Define by induction for any $k \in \nsets$, $\flow_k = \transfo_k\circ\flow_{k-1}$, the flow defined by the elementary transformations $\transfo_k,\dots,\transfo_1$, and similarly $\flow_{-k}=\flow_{-(k-1)}\circ\transfo_{k}^{-1}$. We will note by simplicity in the following, for $k\in\nsets$, $\transfo_{-k}= \transfo_{k}^{-1}$ and $\flow_0 = \transfo_0 = \Idd_{d}$. 
+ 
+ If  for any $k$, $\transfo_k$ is measure-preserving for $\rho$, that is the pushforward density of $\rho$ by
+$\transfo_k$ is equal to $\rho$
+%, i.e. $\rho(\transfo^{-1}(x)) \Jac_{\transfo^{-1}}(x)= \rho(x)$)
+then any flow $\flow_k$, $k \in \zset$, can be used to construct
+an estimator of $\int f(x) \rho(x) \rmd x$. For a nonnegative sequence $(\varpi_k)_{k \in\zset}$ such that  $\sum_{k\in \zset} \varpi_k=1$ and $X^{i}\overset{\text{iid}}{\sim}\rho$, 
+$N^{-1} \sum_{i=1}^N \sum_{k\in \zset} \varpi_k f(\flow_k(X^i))$ is an unbiased estimator of $\int f(x) \rho(x) \rmd x$. In particular, Jensen
+inequality ensures that this estimator has smaller variance
+than the crude Monte Carlo estimator
+$I_N^{\MC}= N^{-1} \sum_{i=1}^Nf(X^i)$.  IFIS aims at generalizing
+this construction using invertible flows
+$\{\transfo_k\}_{k\in\nsets}$ for which $\rho$ is no longer invariant. 
+\emph{This flow is designed
+using prior knowledge of $f$ to transport the samples $X^{1:N}$ to
+regions which are important for the computation of
+$\int f(x) \rho(x) \rmd x$.}
+
+% \alaini{old}
+% In particular, it suffices to set $N^{-1} \sum_{i=1}^N f(\transfo^k(X^i))$, 
+% However, this estimator has the same variance as the usual
+% Monte Carlo estimator $N^{-1} \sum_{i=1}^N f(X^i)$ and no
+% gain of efficiency can be expected.
+% IFIS aims at defining estimators using dynamics $\transfo$
+% for which $\rho$ is no longer invariant, but designed using prior
+% knowledge of $f$ to transport the samples $X^{1:N}$ to regions which
+% are important for the computation of $\int f(x) \rho(x) \rmd x$. 
+% \alaini{fin old}
+
+Consider now general transformations $\{\transfo_k\}_{k\in\nsets}$. %, possibly not measure preserving for $\rho$.  
+The first step is to study
+ the distribution of $\flow_{-k}(X)$ for $k \in \zset$
+and $X\sim \rho$. 
+%In the case $\mso \neq \rset^d$, %then the estimator is no longer unbiased and
+%some caution has to be exercised to exit times of this dynamics from $\mso$.  
+%We use the notation $\intentier{a}{b} = \{a,\dots, b\}$ for $a,b \in \zset$ and $\intentierU{b} = \intentier{1}{b}$ if $b \geq 1$. 
+%Define
+%$\tau^{+} : \rset^d \to \nset$, $\tau^{-} : \rset^d \to \nset_-$, for
+%$x \in \rset^d$ by
+%\begin{equation}
+%\label{eq:definition-tau-+--}
+%\tau^{+}(x)=\inf\{k\geq 1\, :  \,  \transfo^{k}(x) \not \in \mso\} \eqsp, \quad \tau^{-}(x)=\sup\{k\leq -1\, :  \,  \transfo^{k}(x) \not \in \mso\} \eqsp,
+%\end{equation}
+%with the convention $\inf \emptyset = +\infty$ and
+%$\sup \emptyset = - \infty$, and define
+%\begin{equation}
+%  \label{eq:def_rmi}
+%  \rmi = \{(x,k) \in \mso\times \zset\,:\, k \in
+%\intentier{\tau^-(x)+1}{\tau^+(x)-1}\} \eqsp.
+%\end{equation}
+%If $\mso = \rset^{d}$, then $\tau^{+}(x) = \plusinfty$, $\tau^{-}(x) = -\infty$ for any $x \in \rset^d$ and
+%$\rmi = \rset^{d} \times \zset$. 
+For any $k \in \zset$, define $\rho_k : \rset^d \to \rset_+$ by
+\begin{equation}
+\label{eq:definition-rho-k}
+    \rho_k: x\mapsto \rho(\flow_k(x))  \absLigne{\JacOp{\flow_k}(x)}\eqsp,
+\end{equation}
+where $\absLigne{\JacOp{\Phibf}(x)}$ denotes the absolute value of the determinant of the Jacobian matrix of a mapping $\Phibf$ evaluated at $x$.
+% When $\mso = \rset^{d}$, then $\1_{\rmi}\equiv 1$ and
+$\rho_k$ is the push-forward measure of $\rho$ by $\flow_{-k}$, \ie~the distribution of $\flow_{-k}(X)$ for $X \sim \rho$. In particular, we have for any $k \in \zset$ and  measurable nonnegative function $f:\rset^d \to \rset_+$,
+%The following lemma generalizes this result to handle the case $\mso \neq \rset^{d}$.
+\begin{equation}
+    \label{eq:inf_non_eq_av_0}
+    \int \dummy(y)    \rho_k(y)\rmd y =
+  \int \dummy(\flow_{-k}(x)) \rho(x)\rmd x  \eqsp.
+\end{equation}
+
+%\begin{lemma}
+%\label{theo:inf_non_eq_0}
+%For any $k \in \zset$ and  measurable nonnegative function $f:\rset^d \to \rset_+$, we have
+%\begin{equation}
+%    \label{eq:inf_non_eq_av_0}
+%    \int \dummy(y)    \rho_k(y)\rmd y =
+%  \int \dummy(\transfo^{-k}(x)) \indi{\rmi}(x,-k)\rho(x)\rmd x  \eqsp.
+%\end{equation}
+%\end{lemma}
+%\Cref{theo:inf_non_eq_0} shows that $\rho_k$ is the push-forward
+%measure of $\indi{\rmi}(x,-k)\rho({x})$ by $\transfo^{-k}$. In addition, for
+%$k \in \zset$, $ \int \indi{\rmi}(x,-k)\rho({x})\rmd x \in \rset^*_+$ implies that $\int \rho_k(x) \rmd x \in \rset^*_+$ and if
+%for any $x \in \mso$, $\indi{\rmi}(x,-k) =
+%1$, then $\int \rho_k(x) \rmd x = 1$ and $\rho_k$ is a probability density. 
+
+To understand our next derivation and the construction of IFIS, write
+\[
+\int f(y) \rho(y) \rmd y =
+\int f(\flow_{-k}(x)) \rho(\flow_{-k}(x)) |\JacOp{\flow_{-k}}(x)|\rmd x =
+\int f(\flow_{-k}(x)) \frac{\rho(\flow_{-k}(x))}{\rho_k(\flow_{-k}(x))} \rho(x) \rmd x \eqsp,
+\]
+showing that the distribution $\rho_k$ can be used as an IS distribution to define an unbiased estimator
+$N^{-1}\sum_{i=1}^N f(\flow_{-k}(X^i))\rho(\flow_{-k}(X^i))/
+\rho_k(\flow_{-k}(X^i))$  for $X^i\sim \rho$. %However, if the condition $\1_{\rmi}(x,-k) = 1$ does not hold for almost all $x \in \mso$, then \Cref{theo:inf_non_eq_0} shows that $\rho_k$ is no longer a probability density. Yet, the same result establishes that integrals \wrt~$\rho_k$ can still be expressed as integral \wrt~
+%$\rho$. However, even if $\rho_k$ can be normalized so that it defines a density on $\rset^d$, its support can be strictly smaller than $\mso$ and therefore, $\rho$ is not absolutely continuous \wrt~$\rho_k$. To address this issue, 
+We consider in the sequel a linear combination of these measures $\sum_{k\in\zset} a_{-k} \rho_k$ using a nonnegative sequence $(a_k)_{k \in\zset}$. Imposing $a_0 \neq 0$ ensures that this measure has the same support as $\rho$ and can be used as importance distribution if it defines a density. This latter condition is formulated as follows. 
+\begin{assumption}
+  \label{assumption:z_ne_finite}
+  The nonnegative sequence $(a_k)_{k\in\zset}$ satisfies
+\begin{equation}
+\label{eq:def_z_ne}
+    \constT = \int\sum_{k\in \zset}  a_{-k} \rho_k(x) \rmd x = \int\sum_{k\in \zset}  a_{-k} \rho(\flow_k(x))  \absLigne{\JacOp{\flow_k}(x)} \rmd x< \infty\eqsp,
+  \end{equation}
+    where $\rho_k$ is defined by \eqref{eq:definition-rho-k}.
+  \end{assumption}
+This assumption is satisfied if $\sum_{k \in\zset} a_k < \plusinfty$. We assume this holds in the following. 
+%In the case, if $a_k \equiv 1$,
+%  \Cref{assumption:z_ne_finite} boils down to
+%  $ \int\sum_{k= \tau^{-}(x)+1}^{\tau^{+}(x)-1} \rho(\transfo^k(x))
+%  \absLigne{\JacOp{\transfo^k}(x)} \rmd x< \infty$. The former then inherently implies some conditions on the dynamics $\transfo$ and $\mso$ similar to the one required in the continuous-time setting by \cite{rotskoff:vanden-eijden:2019}. %However in such setting 
+  
+   Under
+  \Cref{assumption:z_ne_finite}, based on the family of transformations $\{\transfo_k\}_{k\in\nsets}$, we can define the probability measure
+  $\rhoT(\rmd x)$ with density \wrt~the Lebesgue measure given for
+  any $x \in \rset^d$, by
+\begin{equation*}
+    \rhoT(x) =  \frac{1}{\constT}\sum_{k \in \zset} a_{-k} \rho_k(x)= \frac{1}{\constT} \sum_{k \in \zset} a_{-k} \rho(\flow_k(x))  \absLigne{\JacOp{\flow_k}(x)} \eqsp.
+  \end{equation*}
+%  If we take $a_k \equiv 1$,  $\rhoT$ is the discrete-time
+%  counterpart of the non-equilibrium density defined in
+%  \cite[Eq. (6)]{rotskoff:vanden-eijden:2019}. 
+The term \textit{non-equilibrium} is coined since $\rhoT$ is different from $\rho$ if $\transfo_k$ does not
+  preserve $\rho$, $\rho$ being referred
+  in physics as the \textit{equilibrium distribution}. 
+  
+  Using $\rhoT$ as an importance distribution to obtain an unbiased
+  estimator of $\int \dummy(x) \rho(x) \rmd x$ raises two issues.
+%  \begin{equation}
+%    \label{eq:estimator_first_exp_rho_ne}
+%I_N^{\IFIS} = N^{-1} \sum_{i=1}^N  f(\tilde{X}^i) %\rho(\tilde{X}^i)/\rhoT(\tilde{X}^i)   \eqsp ,\quad % \text{with $X^{1:N} \sim_{\mathrm{i.i.d}} \rhoT$}  %\eqsp. 
+%  \end{equation}
+%  However, this raises two problems. 
+First, it is unclear how to sample from $\rhoT$. Second, evaluating this density and thus the importance weights is in general not possible since $\constT$ is intractable. We address these two issues in the sequel to derive the IFIS estimator. From \Cref{theo:inf_non_eq_0}, we obtain the following important result.
+  
+  Esay to estimate in our case now.
+  
+  However, problem of unbounded importance weights ?
+  
+\begin{theorem}
+ \label{theo:inf_non_eq}
+ Assume \Cref{assumption:z_ne_finite}.  For any measurable nonnegative function $g:\rset^d \to \rset_+$, we have
+\begin{equation}
+\label{eq:inf_non_eq_av}
+  \int
+g(y)     \rhoT(y) \rmd y  = \constT^{-1} \int \left(\sum\nolimits_{k\in\zset} a_{k}g(\flow_k(x))  \right)\rho({x})\rmd x \eqsp.
+\end{equation}
+\end{theorem}
+Hence, the expectation $\int g(x) \rhoT(x)\rmd x$ can be evaluated unbiasedly by sampling $X\sim\rho$, computing the orbit of the flow and weighting the values of the function along the orbits to obtain 
+  $\constT^{-1}\sum_{k \in \zset}
+  a_{k}g(\flow_k(X))$.
+  
+As pointed out earlier, the support of $\rhoT$ contains the support of $\rho$ if $a_0 \neq 0$. So by applying Theorem \ref{theo:inf_non_eq} to $g \leftarrow f \rho /\rhoT$, we obtain 
+\begin{equation}
+\label{eq:key-relation}
+\int \left(\dummy(x) \frac{\rho(x)}{\rhoT(x)}\right) \rhoT(x)  \rmd x =
+\int \dummy(x) \rho(x)  \rmd x
+=\int \sum_{k\in \zset}  \parenthese{\dummy(\flow_{k}(x)) w_k(x)} \rho(x)  \rmd x \eqsp,
+\end{equation}
+where we have set (with the convention $0/0=0$), 
+\begin{equation}
+\label{eq:w_k_first_def}
+w_k(x) = \left. a_{k}  \rho(\flow_{k}(x)) \middle/ [\constT\rhoT(\flow_{k}(x))] \right. = \left. a_{k}\rho(\flow_{k}(x))\middle/ \sum\nolimits_{j\in\zset} a_{-j} \rho(\flow_{j}\circ\flow_{k}(x))\absLigne{\JacOp{\flow_j}(\flow_k(x))}\right. \eqsp.
+\end{equation}
+Note that $\constT\rhoT(\transfo^{k}(x))$ simplifies and the
+normalizing constant $\constT$ does not appear in the right-hand
+side of \eqref{eq:w_k_first_def}. The expression of the weights may
+still seem daunting but, however we can consider two particular case.
+First, if we choose the support of the sequence $(a_k)_{k\in\zset}$ to be small, typically of size $K$, then the computation of the weights is the parallel computation of $K$ terms divided by a sum of $K$ terms which can be also performed in parallel.
+Moreover, if we suppose now that the transformations are identical, then we can write for any $k\in\zset$, $\flow_k = \transfo^k$, and the following Lemma shows that in that case, the computation of the weights can be
+considerably simplified.
+\begin{lemma}
+\label{SPlemma:weights}
+Assume \Cref{assumption:z_ne_finite} and $a_0 \neq 0$.  Then, for any $x \in \rset^d$ and $k \in \zset$,
+\begin{equation}
+  \label{eq:def_w_k}
+    w_{k}(x) =  \left. a_{k} \rho_k(x) \middle / \left\{ \sum\nolimits_{j\in \zset} a_{k-j} \rho_{j}(x) \right\} \right. \eqsp.
+\end{equation}
+\end{lemma}
+By \eqref{eq:w_k_first_def},  for $k \in \zset$, the weights $w_{k}(x)$ are also upper bounded uniformly in $x$: for any $x \in \rset^d$ and $k \in \zset$,  $w_{k}(x) \leq a_{k}/a_0$. In addition,
+if $a_j = 0$ for any $j\in \zset$ such that $\abs{j} \geq K$, then for any $k \in \zset$ such that $\abs{k} \geq K$, we have $w_k \equiv 0$. 
+%\begin{equation}
+%  \label{eq:est_f_rho}
+%I^{\IFIS}_N =   N^{-1} \sum_{i=1}^N %\sum_{k\in\zset} w_k(X^i) %f(\transfo^k(X^i))  \eqsp, 
+%\quad \text{with $X^{1:N} %\sim_{\mathrm{i.i.d}} \rho$}  
+%\end{equation}
+
+From \eqref{eq:key-relation} and \eqref{eq:w_k_first_def}, we define  in \Cref{algo:IFIS}  the IFIS estimator of $\int f(x) \rho(x) \rmd x$.
+\begin{algorithm}
+\begin{enumerate}[wide, labelwidth=!, labelindent=0pt, label=(\arabic*)]
+\item Sample $X^i \overset{\text{iid}}{\sim} \rho$ for $i\in[N]$.
+\item For $i \in \intentierU{N}$, compute backward and forward the
+  path $(\transfo^j(X^i)_{j \in\zset}$ and weights $(w_j(X^i))_{j \in\zset}$. 
+\item Compute $I^{\IFIS}_N(f) =   N^{-1} \sum_{i=1}^N \sum_{k\in\zset} w_k(X^i)  f(\transfo^k(X^i))$. 
+\end{enumerate}
+\caption{Invertible Flow Importance Sampling}
+\label{algo:IFIS}
+\end{algorithm}
+% Define
+% $I_N^{\MC}(f)$  the crude Monte Carlo estimator $I_N^{\MC}= N^{-1} \sum_{i=1}^N \likelihood(X^i) f(X^i)$, with $X^{1:N} \sim_{\mathrm{i.i.d}} \rho$.
+\begin{theorem}
+\label{theo:importance-sampling}
+Assume \Cref{assumption:z_ne_finite} and $a_0 \neq 0$. Then, $I^{\IFIS}_N(f)$ is an unbiased estimator of $\int f(x) \rho(x) \rmd x$. 
+%Moreover, if $a_k \equiv 1$, then $\PVar(I_N^{\IFIS}(f)) \leq \PVar(I_N^{\MC}(f))$, where $I_N^{\MC}(f)$ is the crude Monte Carlo estimator. 
+\end{theorem}
+%Note that although the variance of $I^{\IFIS}_N(f)$ may be smaller than
+%the variance of the crude Monte Carlo estimator $I_N^{\MC}(f)$, this comes at an increased computational cost.
+\arnaud{1-selection of $a_k$??  2-non-homogeneous flow?}
+
+
+\subsection{Invertible flow importance sampling estimators of $Z$ and $\pi$}\label{subsec:NISestimators}
+
+Consider the target density $\pi(x) = \likelihood(x) \rho(x)/\const$,
+where $\const$ is intractable.  
+By applying \Cref{algo:IFIS} to
+the test function $f \leftarrow \likelihood$, it follows directly that if
+$X^{i}\overset{\text{iid}}{\sim}\rho$ then
+\begin{equation}
+  \label{eq:def_estimator_normal_const}
+  \estConstC{X^{1:N}}=\tfrac{1}{N}\textstyle\sum_{i=1}^{N}
+  \sum_{k\in \zset}\likelihood(\transfo^{k}(X^i))w_k(X^i) \eqsp,
+\end{equation}
+is an unbiased estimator of $Z$.  We  show in Section \ref{subsec:VAE} how this estimator can be used to provide a novel class of Variational AutoEncoder (VAE). 
+
+Let $g$ be a $\pi$-integrable function. To estimate $\int g(x) \pi(x) \rmd x$, we can approximate both $\int \likelihood(x) \rho(x) \rmd x$ and  $\int g(x) \likelihood(x) \rho(x) \rmd x$  using \Cref{algo:IFIS} applied to the test functions $f \leftarrow g \likelihood$ and $f \leftarrow  \likelihood$; \ie~we consider the biased normalized importance sampling estimator $\int g(x) \hatpi{X^{1:N}}(\rmd x)$ where
+\begin{equation}
+  \label{eq:def_estimator_naive_monte_carlo}
+  \hatpi{X^{1:N}}(\rmd x)= \sum_{i=1}^{N}
+  \sum_{k\in \zset} p_k^i \updelta_{\transfo^k(X^i)}(\rmd x),~\text{where}~p_k^i\propto \likelihood(\transfo^{k}(X^i)) w_k(X^i),~\sum_{i=1}^{N}
+  \sum_{k\in \zset} p_k^i=1 \eqsp.
+\end{equation}
+Practically, the performance and the computational cost of these
+estimators depend of the maps $\{\transfo_k\}_{k\in\nsets}$ one selects. We want
+$\{\transfo_k\}_{k\in\nsets}$ to be able to drive particles to regions which contributes to the computation of 
+$Z$ and the Jacobian of $\{\transfo_k\}_{k\in\nsets}$ to be cheap to compute. 
+
+If we consider a unique transformation, a sensible choice for $\transfo$ is to use a dissipative Hamiltonian dynamics as suggested in
+\cite{rotskoff:vanden-eijden:2019}.
+***Idea: with different flows, use a Hamiltonian with a tempering scheme on the potential*** In such setting
+$x = (p,q) \in \rset^{d}$ and $d=2n$. In practice, the prior $\rho$
+and the target $\pi$ are product of the form $\rho_q(q) \rho_p(p)$ and
+$\pi_q(q) \rho_p(p)$, where $\rho_q,\rho_p$ are density over $\rset^n$
+and $\pi_q(q) = \likelihood_q(q) \rho_q(q)/\const_q$, with $\const_q$ intractable. 
+% \subsection{Non-equilibrium Hamiltonian importance sampling estimators of $Z$ and $\pi$}\label{subsec:NISHamiltonianestimators}
+The dissipative Hamiltonian ODE is defined by %(DHODE)
+\begin{equation}
+  \label{eq:ODE_hamiltonian}
+%\begin{aligned}
+  \dot{q}_t=\nabla_{p} H(q_t,p_t) =  p_t \, \eqsp, \,\,
+\dot{p}_t=-\nabla_{q} H(q_t,p_t)-\gamma p_t = -\nabla U(q_t) - \gamma
+p_t \eqsp,\\
+\end{equation}
+where $H(q,p)=U(q)+ p^T p/2$, and $\gamma >0$ is a damping constant
+responsible for dissipating the energy of the system.
+Any solution $(p_t,q_t)_{t \geq 0}$ of \eqref{eq:ODE_hamiltonian} satisfies $\dot{H}(p_t,q_t) \leq - \gamma \norm[2]{p_t} \leq 0$. Therefore $H$ is a Lyapunov function for this dynamics and all orbits
+tend to fixed points which satisfy $\nabla U(q)=0$ and $p=0$; see e.g. \cite[Proposition 2.2]{maddison2018hamiltonian}. \cite{rotskoff:vanden-eijden:2019} proposed to set $U(q) = -\log(\pi_q(q))$
+in the setting described above.
+
+% Based on
+% this result, \cite{rotskoff:vanden-eijden:2019} suggests to use
+% \eqref{eq:ODE_hamiltonian} to apply their method.
+%However, continuous
+% dynamics cannot be used as such in practice: either the Hamiltonian ODE
+% cannot be explicitly solved or it involves continuous integral which
+% needs to be approximated.  To deal with this limitation,
+We use the
+algorithm described above with $\transfo\leftarrow\transfo_h$, where $\transfo_h$
+is the conformal symplectic integrator of \eqref{eq:ODE_hamiltonian} defined for
+$(p,q) \in \rset^{d}$ by
+\begin{equation}
+  \label{eq:def_psi_h}
+\transfo_h(p,q) = (\rme^{-h \gamma } p -h \nabla U(q),q+h\{ \rme^{-h\gamma} p -h \nabla U(q)\}) \eqsp,
+\end{equation}
+where $h >0$ is a stepsize. For any $h >0$ and $x \in \rset^{d}$, we have
+ by \cite[Theorem 2]{francca2019conformal},
+$\JacOp{\transfo_h}(x) = \rme^{-\gamma h n}$. In addition, $\transfo_h$ is a $\rmC^1$-diffeomorphism with inverse given for any
+$(p,q) \in \rset^{d}$ by $  \transfo_h^{-1}(p,q) = (\rme^{\gamma h}\{p+h \nabla
+U(q-hp)\},q-hp)$.
+% \begin{equation}
+%   \label{eq:def_phi_h_inverse}
+%  \eqsp.
+% \end{equation}
+Therefore, we can easily compute the estimators \eqref{eq:def_estimator_normal_const} and \eqref{eq:def_estimator_naive_monte_carlo} using the weights
+\begin{equation} 
+w_{h,k}(x) = \frac{ a_{k} \rho(\transfo^k_h(x)) \rme^{-\gamma k h n} }{
+    \sum_{j \in\zset} a_{k-j} \rho(\transfo^j_h(x)) \rme^{-\gamma j h n} }.
+\end{equation}
+
+%To select the parameters $h$ and $\gamma$, and more generally to select the parameters of a parameterized $\transfo$, we can optimize an ELBO criterion; see Section \ref{subsec:VAE} for details.
+%The relevance of this approach can be observed on \Cref{fig:hamiltonian_mixture}. The original points sampled from a  uniform are propagated with a damped Hamiltonian dynamics which ensures that the overall energy will decrease, leading the particles to find the modes of the target distribution efficiently, here a mixture of highly peaked independent Gaussian distributions (with standard deviation 0.005) located at $(-1,0)$, $(0,-1)$, $(1,0)$ and $(1,0)$. Moreover, the weighted likelihood $\likelihood(\transfo^{k}(X^i))w_k(X^i)$ increases with $k$ over the trajectory starting at $X^i$, meaning that the optimization is indeed relevant to the estimator \eqref{eq:def_estimator_normal_const}. To justify this claim, we also compare normalizing constant estimators. We compare our IFIS with $N=1000$ with a Monte-Carlo estimator with the same computational budget (we consider a cost of 1 for evaluating the likelihood or its gradient, that means then as many points as there are in total in the trajectories computed by the IFIS estimator). The true value of the normalizing constant $Z$ is 2. For 100 repetitions of the IFIS estimator with $N=500$, we obtain an unbiased estimator of the constant with a standard deviation of $0.843$, while with the same computational budget, the naive Monte Carlo estimator achieves a standard deviation of $1.86$. Enriching the estimator with optimization on the unnormalized target thus allows us to build very robust estimators of highly peaked and multimodal distributions (which often appear in Bayesian statistics), as will be further shown in \Cref{sec:exps}. Here, we use a uniform prior on $q$ on the hypercube centered at 0 and with side 20, both for the Naive estimator and IFIS. We set the parameters for IFIS $h=5\cdot 10^{-2}$, $\gamma = 3$ and $a(k)= \indi{[-100;100]}(k)$.  %\arnaud{please zoom on the figure (even if some of the paths get out), its not really readable as it is. Weighted likelihood, you mean log-target?? Also given, we don't have many applications, i would put this in the experiments section. Is figure 2 really necessary? is it at fixed computational complexity? Just give MSE of the estimators and like this we would have a bigger Figure 1.} 
+%\alain{what is the prior ? the $(a_k)$ ? the step size ?}
+%then apply the method of \Cref{sec:estimator}:
+% if $\nabla U$ is $L$-Lipschitz,
+% $\psi_h(p,q) = (p,q) + h\tilde{\psi}_h(q,p)$, where
+% $\tilde{\psi}_h : \rset^{2d} \to \rset^{2d}$ is a
+% $\tilde{L}$-Lipschitz with
+% $\tilde{L} = (2L) \vee (\norm{\Sigma^{-1}}L)
+% \vee(\gamma+\norm{\Sigma^{-1}})$.  Therefore, we get that for any
+% $h < \tilde{L}^{-1}$, $\psi_h$ is a $\rmC^1$-diffeomorphism, see
+% \Cref{propo:contraction_hamiltonian} in the supplementary for details.
+%setting $x^i_k = (p_k^i,q_k^i)=\transfo^k(x^i_0)$, define for any
+%$x^{1:N}_0 \in (\rset^{2d})^{N}$,
+%\begin{equation}
+%  \label{eq:def_estimator_normal_const}
+%  \estConst^N_g(x^{1:N}_0)=\frac{1}{N}\sum_{i=1}^{N}
+%  \sum_{k\in \zset}g(\likelihood(x_k^i))w_k(x^i_0) \eqsp, \quad
+%w_k(x^i_0) = \frac{ a_{-k} \rho(x_k^i) \rme^{-\gamma k h d} }{
+%    \sum_{j \in\zset} a_{j-k} \rho(x_j^i) \rme^{-\gamma j h d} } %\eqsp.
+%\end{equation}
+%Then, by \Cref{propo:importance_sampling_unbiased}, an unbiased estimator of $\const_{g}$ is given for $N \in \nsets$ by $ \estConst^N(X^{1:N})$ where $X^{1:N}=(X^i)_{i \in \{1,\ldots,N\}}$ is a sequence of \iid~random variables with distribution $\rho$, and $\rho$ and $\transfo$ are suggested above. % We will write as a short-hand
+% notation in the following
+% $\estConst(X^{1:N})=\estConst^N_{g}(X^{1:N})$ and for
+% $i \in \{1,\dots,N\}$, $\estConst(X^{i})=\estConst^1_{g}(X^{i})$, for
+% $g(t) = t$ for any $t \in \rset$.
+
+%\alain{ici mélange de gaussiennes}
+
+% We now give a simple practical example of application of this
+% estimator using for $\transfo$ conformal symplectic integrators of
+% Hamiltonian dynamics.
+
+% \begin{enumerate}
+% \item introduction of conformal hamiltonian and the associated Lyapunov.
+% \item conformal discretization with jacobian
+% \item comparison with roskoff
+% \end{enumerate}
+% where q̇ ≡ dq
+% , ṗ ≡ dp
+% , and γ > 0 is a damping constant responsible for dissipating the energy
+% dt
+% dt
+% of the system. A classical example is given by
+% H(q, p) =
+% kpk 2
+% + f (q)
+% 2m
+% (5)
+% where m is the mass of a particle subject to the potential f . From (4) we obtain the equations
+% of motion
+% p
+% q̇ = ,
+% ṗ = −∇f (q) − γp.
+% (6)
+% m
+% The Hamiltonian is the energy of the system. Taking its total time derivative along tra-
+% jectories one finds Ḣ = −γkpk 2 ≤ 0. Therefore, H is a Lyapunov function and all orbits
+% tend to fixed points, which in this case must satisfy ∇f (q) = 0 and p = 0. Note that (6) is
+% a standard system in classical mechanics, being a nonlinear generalization of the harmonic
+% oscillator with friction.
+       %        the kinetic energy $V:\rset^d \to \rset_+$ as well, such that for any $p \in \rset^d$, $K(p) = 1/2 ||p||^2$, and note for any $(q,p) \in \rset^{2d}$ their Hamiltonian $H(q,p) = K(p)+U(q)$. Let $E_{\max}$ be in $\rset$ such that for $\mso = \ensemble{(q,p) \in \rset^{2d}}{H(q,p)<E_{\max}}$, $\int \rmd x >0$. Finally, let $\measrho$ the uniform measure on $\mso$ as in \cite{rotskoff:vanden-eijden:2019}.
+
+% We consider the diffeomorphism $\transfo:\rset^d \to \rset^d$, following \cite{francca:guilherme:2019} to be the symplectic integrator of the conformal system:
+% \begin{equation}
+%     \label{eq:conf_hamiltonian}
+%     \left\{\begin{matrix}
+%     &\dot{q} = p
+% \\ &\dot{p} = -\gamma p - \nabla U(q)
+% \end{matrix}\right.\eqsp.
+% \end{equation}
+% For any $(q_0, p_0)\in \rset^{2d}$ and any stepsize $h\in \rset_+$, $\transfo(q_0,p_0) = (q_1, p_1)$, where $p_1 =e^{-\gamma h}p_0 - h \nabla U(q_0)$ and $q_1 = q_0 + h p_1$. $\transfo$ is invertible, with inverse given for any $(q_0, p_0)\in \rset^{2d}$ by $\transfo^{-1}(q_0,p_0) = (q_{-1}, p_{-1})$, where $q_{-1} = q_0 - h p_0$ and $p_{-1} = e^{\gamma h}p_0 + h e^{\gamma h} \nabla U(q_0)$.
+% Finally, we have for any $(q, p)\in \rset^{2d}$, $\JacOp{\transfo}(q,p) = e^{-\gamma h d} = \lambda \in (0,1)$.
+% We show in supplementary that in this setting, with $a_k = 1$ for any $k \in \zset$, \Cref{assumption:z_ne_finite} is valid. Moreover, in that case, the weights $w_k$ are defined such that for any $x\in\rset^d$
+% \[
+% \sum_{k\in\zset}w_k(x) = 1 \eqsp.
+% \]
+% Then, $K$ \eqref{eq:kernel} is a Markov kernel, and we have for $x \in \mso$,
+% \begin{align}
+% \label{eq:kernel_simple}
+% K(x,\rmd y)&=\frac{\sum_{k=\tau^{-}(x)+1}^{\infty} \lambda^k \delta_{\transfo^{k}(x)}(\rmd y)}{ \sum_{k=\tau^-(x)+1}^{\infty}  \lambda^k}\\
+% &=\frac{\sum_{i=0}^{\infty} \lambda^{i+\tau^{-}(x)+1} \delta_{\transfo^{i+\tau^{-}(x)+1}(x)}(\rmd y)}{ \sum_{i=0}^{\infty}  \lambda^{i+\tau^{-}(x)+1}}\\
+% &=(1-\lambda) \sum_{i=0}^{\infty} \lambda^{i} \delta_{\transfo^{i+\tau^{-}(x)+1}(x)}(\rmd y).
+% \end{align}
+
+
+%In the following section, we are interested
+
+
+% \subsection{Computing the normalizing constant}
+
+% Assume that we are interested in computing the normalizing constant
+% \begin{equation}
+%   \label{eq:normal_const}
+%   \const =\int \likelihood(x)\rho(x)\rmd x \eqsp,
+% \end{equation}
+% where $x\mapsto \likelihood(x)$ is a non-negative function. Then, by \Cref{propo:importance_sampling_unbiased},
+% an unbiased estimator of $\const_{\likelihood}$ is given for $N \in \nsets$ by $  \estConst^N(X^{1:N})$ where
+% % \begin{equation}
+% %   \label{eq:def_estimator_normal_const}
+% %   \estConst^N(x^{1:N})=\frac{1}{N}\sum_{i=1}^{N}
+% %  \sum_{k\in \zset}\likelihood(\transfo^k(x^i))w_k(x^i) \, \,  \text{ for $x^{1:N} \in (\rset^{d})^{N}$} \eqsp,
+% % \end{equation}
+% and $X^{1:N}=(X^i)_{i \in \{1,\ldots,N\}}$ is a sequence of \iid~random variables with distribution $\rho$. We will write as a short-hand notation in the following $\estConst(X^{1:N})=\estConst^N(X^{1:N})$ and for $i \in \{1,\dots,N\}$, $\estConst(X^{i})=\estConst^1(X^{i})$.
+% \alain{a revoir}
+% As $\estConst^N(X^{1:N})$ is a non-negative unbiased estimator of the
+% normalizing constant $\const_{\likelihood}$, we could combine it to (correlated)
+% pseudo-marginal MCMC methods if necessary.
+% This estimator can be
+% linked to Nested sampling methods, as $\transfo$ can typically be some
+% optimizer for the likelihood function $\likelihood$. This
+% interpretation is given in Supplementary.
+% \alain{fin a revoir}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
+
+\subsection{Related work}\label{subsec:relatedwork}
+The idea of designing an importance distribution to compute $Z$ by applying an invertible flow $\flow$ to an initial measure $\rho$ has previously appeared  numerous times in the literature; see e.g. \cite{cuendet2006statistical,jarzynski2002targeted,meng2002warp,neal2005hamiltonian,procacci2006crooks}. More recently, it has been proposed to select the parameters of such a map so as to minimize the `mode seeking' Kullback-Leibler (KL) divergence between the push-forward $\flow_{\#}\rho$ of $\rho$ through $\transfo$ and $\pi$; see e.g. \cite{ el2012bayesian,muller2018neural,papamakarios2019normalizing,prangle2019distilling,wirnsberger2020targeted}. These approaches are not guaranteed to provide bounded importance weights and typically provide an importance distribution $\flow_{\#}\rho$ with lighter tails than $\rho$.
+Compared to these approaches, IFIS builds the importance distribution using a mixture of push-forward measures and, if $x\mapsto \likelihood(x)$ is bounded, the importance weights $w_k \likelihood$ are guaranteed to be bounded if $a_0\neq 0$.

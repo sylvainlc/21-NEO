@@ -1,0 +1,276 @@
+ \subsection{Notations}
+In this section, we use measure theoretic notations. We denote by $\measpi$ and $\measprop$ the target and proposal probability measures. These two probability measures are assumed to have \pdf\  w.r.t. the Lebesgue measure on $\rset^d$ denoted by $\target$ and $\proposal$ in the main article. %, but this is not needed.
+The central property exploited here is that
+\begin{equation}
+\label{eq:key-relation}
+\measpi(\rmd x)= \measprop(\rmd x) \likelihood(x) / \const \eqsp,
+\end{equation}
+or equivalently, using Radon-Nikodym derivative
+\begin{equation}
+\label{eq:with-derivative}
+\frac{\rmd \measpi}{\rmd \measprop}(x)= \frac{\likelihood(x)}{\const}  \eqsp.
+\end{equation}
+For $k \in \{0,\dots,K\}$, we denote by $\measprop_k(\rmd x)$ the pushforward of $\measprop(\rmd x) \indi{I}(x,k)$ by $\transfo^k$, for any nonnegative measurable function $f$, and $k \in \nset$,
+%For $k \in \{0,\dots,K\}$, we denote by $\measprop_k$ the pushforward of $x\mapsto\indi{\rmi}(x,k)\measprop(x)$ by $\transfo^k$, for any nonnegative measurable function $f$, and $k \in \nset$,
+\begin{equation}
+\int f(x) \measprop_k( \rmd x) = \int f(\transfo^k(x)) \indi{I}(x,k) \measprop(\rmd x)  \eqsp.
+\end{equation}
+%\begin{equation}
+  %  \label{eq:inf_non_eq_av_0}
+  %  \int \dummy(y)    \measprop_k(y)\rmd y =
+  %\int \dummy(\transfo^{k}(x)) %\indi{\rmi}(x,k)\measprop(x)\rmd x  \eqsp.
+%\end{equation}
+If $\measprop$ has a density $\proposal$ \wrt\ the Lebesgue measure on $\rset^d$, then  $\measprop_k$ also has a density \wrt\ the Lebesgue measure which is given by \eqref{eq:definition-rho-k}.
+With these notations, for $k \in \{0,\dots,K\}$,
+\begin{align}
+\label{eq:new-definition-weights}
+\w_k(x)= \frac{1}{\constT} \frac{\rmd \measprop}{\rmd \measprop_T}(\transfo^k(x)) \eqsp,
+\\
+\label{eq:new-definition-rho_T}
+\measprop_T(\rmd x)= \frac{1}{\constT} \sum_{k=0}^K \measprop_k(\rmd x) \eqsp.
+\end{align}
+For $i \in \{1,\dots,N\}$, we denote by $R_i(x^i,\rmd \chunkum{x}{1}{N}{i})$ the condition proposal kernels. Recall that for all $i,j \in \{1,\dots,N\}$, we assume that (see \eqref{eq:conditional-decomposition})
+\begin{equation}
+\label{eq:full-symmetry}
+\measprop(\rmd x^i) R_i(x^i; \rmd \chunkum{x}{1}{N}{i})= \measprop(\rmd x^j) R_j(x^j; \rmd \chunkum{x}{1}{N}{j})= \measprop_N(\rmd \chunku{x}{1}{N}) \eqsp,
+\end{equation}
+where $\measprop_N$ is the joint distribution of the proposals. In words, it means that all the one-dimensional marginal of $\measprop_N(\rmd \chunku{x}{1}{N})$ is $\proposal(\rmd x^i)$.
+
+
+
+\subsection{Iterated Sampling Importance Resampling}
+\label{subsec:ISIR-partially-collapsed-dependent}
+We first consider a general version of the ISIR algorithm (see \cite{tjelmeland2004using,andrieu2010particle,ruiz:titsias:doucet:2020}) and we show in this section that it is a partially collapsed Gibbs sampler \cite{vandyk:park:2008} of the extended distribution, given for $i \in \{1,\dots,N\}$ by
+\begin{equation}
+\label{eq:extended-ISIR}
+\bmeaspi(\rmd \chunku{x}{1}{N},i, \rmd y)= \frac{1}{N} \measpi(\rmd x^i) R_i(x^i, \rmd \chunkum{x}{1}{N}{i}) \delta_{x^i}(\rmd y) \eqsp.
+\end{equation}
+For ease of presentation, we added the selected sample $y$ in the joint distribution.
+It is straightforward to establish that the marginal distributions of \eqref{eq:extended-ISIR} are given by
+\begin{align}
+\label{eq:marginal-y}
+\bmeaspi(\rmd y) &=\measpi(\rmd y)  \eqsp, \\
+\label{eq:marginal-i}
+\bmeaspi(i) &= 1/N \eqsp, \quad i \in \{1,\dots,N\} \eqsp, \\
+\label{eq:marginal-x}
+\bmeaspi(\rmd \chunku{x}{1}{N})&= \frac{1}{N} \sum_{i=1}^N \measpi(\rmd x^i) R_i(x^i; \rmd \chunkum{x}{1}{N}{i}) \eqsp.
+\end{align}
+We now compute the conditional distributions and  check that
+\begin{equation}
+\label{eq:ISIR-conditional-1}
+K_1(i,y; \rmd \chunku{x}{1}{N}) = \bmeaspi(\rmd \chunku{x}{1}{N} \mid i,y) = \updelta_y(\rmd x^i) R_i(x^i, \rmd \chunkum{x}{1}{N}{i}) \eqsp.
+\end{equation}
+This corresponds exactly to the first step of ISIR, the refreshment of the set of proposals given the conditioning proposal. Indeed, for any nonnegative measurable functions $\{f_j\}_{j=1}^N$ and $g$,
+\begin{align*}
+ \frac{1}{N} \sum_{i'=1}^N\int \prod_{j=1}^N \indiacc{i}(i') f_j(x^j) g(y) \bmeaspi(\rmd \chunku{x}{1}{N},i', \rmd y) & = \frac{1}{N} \int \prod_{j=1}^N f_j(x^j) g(x^i) \measpi(\rmd x^i) R_i(x^i; \rmd \chunkum{x}{1}{N}{i}) \\
+& = \frac{1}{N} \int \measpi(\rmd y) g(y) \int \updelta_y(\rmd x^i) R_i(x^i; \rmd \chunkum{x}{1}{N}{i}) \prod_{j=1}^N f_j(x^j) \eqsp,
+\end{align*}
+which validates  \eqref{eq:ISIR-conditional-1}. We now establish that the conditional density of $i$ satisfies
+\begin{equation}
+\label{eq:ISIR-conditional-2}
+K_2(\chunk{x}{1}{n}; i)= \bmeaspi(i \mid \chunku{x}{1}{N}) = \frac{\likelihood(x^i)}{\sum_{j=1}^N \likelihood(x^j)} \eqsp.
+\end{equation}
+This corresponds to the second step of the ISIR algorithm, in which a proposal index is selected conditional to the set of proposals.
+Indeed, for any nonnegative measurable functions $\{f_j\}_{j=1}^N$,
+\begin{align*}
+\frac{1}{N} \int \measpi(\rmd x^i)R_i(x^i; \rmd \chunkum{x}{1}{N}{i}) \prod_{j=1}^N f_j(x^j)
+& = \frac{1}{N \const} \int \likelihood(x^i) \measprop(\rmd x^i)  R_i(x^i;  \rmd \chunkum{x}{1}{N}{i}) \prod_{j=1}^N f_j(x^j) \\
+& = \frac{1}{N \const} \int \likelihood(x^i) \measprop_N(\rmd\chunku{x}{1}{N}) \prod_{j=1}^N f_j(x^j) \\
+& = \frac{1}{N \const} \int \frac{\likelihood(x^i)}{\sum_{j=1}^N \likelihood(x^j)}
+\sum_{m=1}^N \likelihood(x^m) \measprop(\rmd x^m) R_m(x^m;  \rmd \chunkum{x}{1}{N}{m}) \prod_{j=1}^N f_j(x^j)
+\end{align*}
+where we have used \eqref{eq:full-symmetry}. We conclude by noting that $\measpi(\rmd x)= \likelihood(x) \measprop(\rmd x) / \const$ and using \eqref{eq:marginal-x}.
+We obviously have, by construction, that the conditional distribution of the auxiliary variable $y$  satisfies
+\begin{equation}
+\label{eq:ISIR-conditional-3}
+K_3(\chunku{x}{1}{N}, i; \rmd y)= \measpi(\rmd y \mid \chunku{x}{1}{N}, i)= \delta_{x^i}(\rmd y).
+\end{equation}
+This is the final step of the algorithm: the selection of the conditioning particle (this step is implicit in the general description of the algorithm in the main text).
+
+The ISIR sampler is a partially collapsed Gibbs sampler. In the first step \eqref{eq:ISIR-conditional-1}, we use the first full conditional, where $K_1$ leaves $\bmeaspi(\rmd \chunku{x}{1}{N}, i, \rmd y)$ invariant. In a second step, we collapse the distribution \wrt\ $y$. Lastly, $K_2$ leaves the marginal $\bmeaspi(\rmd \chunku{x}{1}{n}, i)$ invariant. Therefore,
+\[
+\sum_{i_0=1}^N \int \bmeaspi(\rmd \chunku{x_0}{1}{N},i_0,\rmd y_0)
+K_1(i_0,y_0; \rmd \chunku{x_1}{1}{N}) K_2(\chunku{x_1}{1}{N};i_1)= \bmeaspi(\rmd \chunku{x_1}{1}{N},i_1)
+\]
+The validity of the PCG follows from the decomposition
+\[
+\bmeaspi(\rmd \chunku{x_1}{1}{N},i_1) K_3(\chunku{x_1}{1}{N},i_1 ; \rmd y_1)= \bmeaspi(\rmd \chunku{x_1}{1}{N},i_1, \rmd y_1) \eqsp.
+\]
+
+\subsection{Invariance for \IFIS\ sampler}
+\label{subsec:partial-collapsed-infine}
+Consider the joint proposal distribution, given for all $i \in \{1,\dots,N\}$ and $k \in \{0,\dots, K\}$ by
+\begin{equation}
+\label{eq:joint-distribution}
+\bmeaspi(\rmd \chunku{x}{1}{N},i,k,\rmd y)= \frac{1}{N \const} \w_k(x^i) \likelihood(\transfo^k(x^i)) \measprop(\rmd x^i) R_i(x^i;\rmd \chunkum{x}{1}{N}{i}) \updelta_{\transfo^k(x^i)} (\rmd y)\eqsp.
+\end{equation}
+For ease of presentation, we introduce here an additional auxiliary variable, denoted by $y$, which corresponds to the active sample. We show below that the \IFIS\ algorithm is a partially collapsed Gibbs sampler; see \cite{vandyk:park:2008}.
+
+We first prove that for any $i \in \{1,\dots,N\}$ and $k \in \{0,\dots,K\}$, the marginal distribution of the variables $(i,k,y)$ is given by
+\begin{equation}
+\label{eq:fact-joint-1}
+\bmeaspi(i,k,\rmd y) = \frac{1}{N\constT} \frac{\rmd \measpi}{\rmd \measprop_T}(y) \measprop_k(\rmd y) \eqsp.
+\end{equation}
+Note indeed that, if $g$ is a nonnegative measurable function
+\begin{align*}
+\sum_{i'=1}^N \sum_{k'=0}^{K} \int \indiacc{i}(i') \indiacc{k}(k') g(y) \bmeaspi(\rmd \chunk{x}{1}{N}, i', k', \rmd y) &= \frac{1}{N \const} \int \w_k(x^i) \likelihood(\transfo^k(x^i)) \measprop(\rmd x^i) R_i(x^i;\rmd \chunkum{x}{1}{N}{i}) g(\transfo^k(x^i)) \\
+&= \frac{1}{N \const} \int \w_k(x^i) \likelihood(\transfo^k(x^i)) \measprop(\rmd x^i)  g(\transfo^k(x^i)) \eqsp.
+\end{align*}
+Plugging \eqref{eq:new-definition-weights} inside the integral and using the fact that $\measprop_k$ is the pushforward of $\measprop$ by $\transfo^k$, we obtain
+\begin{align*}
+ \frac{1}{N \const} \int \w_k(x^i) \likelihood(\transfo^k(x^i)) \measprop(\rmd x^i)  g(\transfo^k(x^i)) &  = \frac{1}{N \const} \int \frac{1}{\constT} \frac{\rmd \measprop}{\rmd \measprop_T}(\transfo^k(x^i)) \likelihood(\transfo^k(x^i)) \measprop(\rmd x^i) g(\transfo^k(x^i)) \\
+& = \frac{1}{N \constT} \int \frac{\rmd \measpi}{\rmd \measprop_T}(\transfo^k(x^i)) \measprop(\rmd x^i) g(\transfo^k(x^i)) \\
+&  = \frac{1}{N \constT} \int \frac{\rmd \measpi}{\rmd \measprop_T}(y) \measprop_k(\rmd y) g(y) \eqsp,
+\end{align*}
+which shows \eqref{eq:fact-joint-1}. Using \eqref{eq:new-definition-rho_T},
+\begin{equation}
+\label{eq:fact-joint-1-cor}
+\bmeaspi(\rmd y)
+= \sum_{i=1}^N \sum_{k=0}^K \bmeaspi(i,k,\rmd y) =  \sum_{k=0}^K   \frac{1}{\constT} \frac{\rmd \measpi}{\rmd \measrho_T}(y) \measprop_k(\rmd y) =  \frac{\rmd \measpi}{\rmd \measrho_T}(y) \measrho_T(\rmd y)= \measpi(\rmd y) \eqsp.
+\end{equation}
+Next, we establish that, for $i \in \{1,\dots,N\}$,
+\begin{equation}
+\label{eq:fact-joint-2}
+\bmeaspi(\rmd \chunku{x}{1}{N},i)= \frac{\estConstC{x^i}}{N \const}  \measprop_N(\rmd \chunku{x}{1}{N}) \eqsp,
+\end{equation}
+where, see \eqref{eq:def_estimator_normal_const_1},
+\begin{equation}
+\label{eq:new-estconst}
+ \estConstC{x}=\sum_{k=0}^K\likelihood(\transfo^{k}(x)) \w_k(x) \eqsp.
+\end{equation}
+For all nonnegative measurable functions $\{f_j\}_{j=1}^N$,
+\begin{align*}
+\sum_{i'=1}^N \sum_{k=0}^K \indiacc{i}(i') \int \prod_{j=1}^N f_j(x^j) \bmeaspi(\rmd \chunku{x}{1}{N},i',k,\rmd y)
+&= \frac{1}{N \const} \sum_{k=0}^K \int \w_k(x^i) \likelihood(\transfo^k(x^i)) \measprop_N(\rmd \chunku{x}{1}{N}) \prod_{j=1}^N f_j(x^j) \\
+&= \frac{1}{N \const} \int \estConstC{x^i} \measprop_N(\rmd \chunku{x}{1}{N}) \prod_{j=1}^N f_j(x^j)\eqsp,
+\end{align*}
+which establishes \eqref{eq:fact-joint-2}. If we marginalize this distribution w.r.t the path index $i$, we get
+\begin{equation}
+\label{eq:fact-joint-2-cor}
+\bmeaspi(\rmd \chunku{x}{1}{N})=  \frac{\estConstC{\chunku{x}{1}{N}}}{\const}  \measprop_N(\rmd \chunku{x}{1}{N}) \eqsp,
+\end{equation}
+where $\estConstC{\chunku{x}{1}{N}} = \sum_{i=1}^N\estConstC{x^i}/N$, see \eqref{eq:def_estimator_normal_const}. We then compute the conditional distributions and establish first that for any $i \in \{1,\dots,N\}$ and $k \in \{0,\dots,K\}$,
+\begin{equation}
+\label{eq:key-relation-1}
+K_1(i,k,y; \rmd \chunku{x}{1}{N})  = \bmeaspi(\rmd \chunku{x}{1}{N} \mid i,k,y)= \updelta_{\transfo^{-k}(y)}(\rmd x^i) R_i(x^i; \rmd \chunkum{x}{1}{N}{i}) \eqsp.
+\end{equation}
+This corresponds to the first step of the \IFIS\ algorithm. We keep the $i$-th path and then draw $N-1$ new paths from the conditional kernels $R_i(x^i;\rmd \chunkum{x}{1}{N}{i})$. Because the paths are deterministic, we do not need in practice to compute $\transfo^{-k}(y)$ (which is the initial point of the path which has been selected).
+For all nonnegative measurable functions $\{f_j\}_{j=1}^N$ and $g$,
+\begin{align*}
+& \frac{1}{N \const} \int \prod_{j=1}^N f_j(x^j) g(y) \bmeaspi(\rmd \chunku{x}{1}{N},i,k,\rmd y) \\
+& = \frac{1}{N \const} \int \prod_{j=1}^N f_j(x^j) g(\transfo^k(x^i))\w_k(x^i) \likelihood(\transfo^k(x^i)) \measprop(\rmd x^i) R_i(x^i; \rmd \chunkum{x}{1}{N}{i}) \\
+&= \frac{1}{N \const} \int \prod_{j=1}^N f_j(x^j) g(\transfo^k(x^i))\frac{1}{\constT} \frac{\rmd \measprop}{\rmd \measprop_T}(\transfo^k(x^i))  \likelihood(\transfo^k(x^i)) \measprop(\rmd x^i) R_i(x^i; \rmd \chunkum{x}{1}{N}{i}) \\
+&= \frac{1}{N \constT} \int f_i(x^i) g(\transfo^k(x^i)) \frac{\rmd \measpi}{\rmd \measprop_T}(\transfo^k(x^i)) \measprop(\rmd x^i) \int R_i(x^i; \rmd \chunkum{x}{1}{N}{i}) \prod_{j \neq i} f_j(x^j) \eqsp.
+\end{align*}
+Since $\measprop_k$ is the pushforward on $\measprop$ by $\transfo^k$, the latter identity implies
+\begin{align*}
+& \frac{1}{N \const} \int \prod_{j=1}^N f_j(x^j) g(y) \bmeaspi(\rmd \chunku{x}{1}{N},i,k,\rmd y) \\
+& =\frac{1}{N \constT} \int f_i(\transfo^{-k}(y)) g(y) \frac{\rmd \measpi}{\rmd \measprop_T}(y) \measprop_k(\rmd y) \int R_i(\transfo^{-k}(y); \rmd \chunkum{x}{1}{N}{i}) \prod_{j \neq i} f_j(x^j) \\
+&= \frac{1}{N \constT} \int g(y) \frac{\rmd \measpi}{\rmd \measprop_T}(y) \measprop_k(\rmd y) \int \updelta_{\transfo^{-k}(y)}(\rmd x^i)  R_i(x^i; \rmd \chunkum{x}{1}{N}{i}) \prod_{j=1}^N f_j(x^j)
+\end{align*}
+and the proof is concluded by \eqref{eq:fact-joint-1}. Next we show that, for $i \in \{1,\dots,N\}$,
+\begin{equation}
+\label{eq:key-relation-2}
+K_{2}(\chunk{x}{1}{N}; i)= \bmeaspi(i \mid \chunk{x}{1}{N})=  \frac{\estConstC{x^i}}{\sum_{j=1}^N \estConstC{x^j}} \eqsp.
+\end{equation}
+This is the third step of the \IFIS\ algorithm (the second step in our description amounts to computing the new paths whence the starting points of the trajectories have been updated).
+For nonnegative measurable functions $\{f_j\}_{j=1}^N$,
+\begin{align*}
+\frac{1}{N \const} \sum_{k=0}^K \w_k(x^i) \likelihood(\transfo^k(x^i)) \measprop(\rmd x^i) R_i(x^i; \rmd \chunkum{x}{1}{N}{i}) \prod_{\ell=1}^N f_\ell(x^\ell)
+&= \frac{1}{N \const} \int \estConstC{x^i} \measprop_N(\rmd \chunku{x}{1}{N}) \prod_{\ell=1}^N f_\ell(x^\ell) \\
+&= \frac{1}{N \const} \int \frac{\estConstC{x^i}}{\sum_{j=1}^N \estConstC{x^j}} \sum_{j=1}^N \estConstC{x^j} \measprop_N(\rmd \chunku{x}{1}{N}) \prod_{\ell=1}^N f_\ell(x^\ell) \\
+&=
+\int \frac{\estConstC{x^i}}{\sum_{j=1}^N \estConstC{x^j}} \frac{\estConstC{\chunku{x}{1}{N}}}{\const} \measprop_N(\rmd \chunku{x}{1}{N}) \prod_{\ell=1}^N f_\ell(x^\ell) \\
+&=  \int \frac{\estConstC{x^i}}{\sum_{j=1}^N \estConstC{x^j}} \bmeaspi(\rmd \chunk{x}{1}{N}) \prod_{\ell=1}^N f_\ell(x^\ell)\eqsp,
+\end{align*}
+where we used \eqref{eq:fact-joint-2-cor} in the last identity. This establishes \eqref{eq:key-relation-2}. We finally prove that for $k \in \{0,\dots,K\}$ and $i \in \{1,\dots,N\}$,
+\begin{equation}
+\label{eq:key-relation-3}
+K_3(i,\chunku{x}{1}{N}; k)= \bmeaspi(k \mid i,\chunku{x}{1}{N})=   \frac{\w_k(\transfo^k(x^i)) \likelihood(\transfo^k(x^i))}{\estConstC{x^i}} \eqsp.
+\end{equation}
+This is the fourth step of the \IFIS\ algorithm, which amounts to selecting a proposal along the selected path.
+Proceeding as above, for nonnegative measurable functions $\{f_j\}_{j=1}^N$,
+\begin{align*}
+& \frac{1}{N \const} \int \w_k(\transfo^k(x^i)) \likelihood(\transfo^k(x^i))
+\measprop(\rmd x^i) R_i(x^i; \rmd \chunkum{x}{1}{N}{i}) \prod_{j=1}^N f_j(x^j) \\
+&= \frac{1}{N \const} \int \frac{\w_k(\transfo^k(x^i)) \likelihood(\transfo^k(x^i))}{\estConstC{x^i}}
+\estConstC{x^i} \measprop_N(\rmd \chunku{x}{1}{N})  \prod_{j=1}^N f_j(x^j) \\
+&= \int \frac{\w_k(\transfo^k(x^i)) \likelihood(\transfo^k(x^i))}{\estConstC{x^i}}
+\bmeaspi(\rmd \chunku{x}{1}{N},i) \prod_{j=1}^N f_j(x^j)\eqsp,
+\end{align*}
+where we used \eqref{eq:fact-joint-2} in the last identity. This establishes \eqref{eq:key-relation-3}.
+It follows directly from the definition of \eqref{eq:joint-distribution} that
+\begin{equation}
+\label{eq:key-relation-4}
+K_4(\chunk{x}{1}{N},i,k;\rmd y)= \bmeaspi(\rmd y \mid \chunku{x}{1}{N},i,k)= \updelta_{\transfo^k(x^i)}(\rmd y) \eqsp.
+\end{equation}
+This characterizes the sample produced at each iteration of the \IFIS\ algorithm, which is used to generate the next starting point.
+
+The \IFIS\ algorithm is a partially collapsed Gibbs. In the first step, \eqref{eq:key-relation-1}, we use the full conditional. In the second step, \eqref{eq:key-relation-2} (selection of the path index), we marginalize with respect to $k$ and $y$:
+\[
+\sum_{i_0=1}^N \sum_{k_0=0}^K \int \bmeaspi(\rmd \chunku{x_0}{1}{N},i_0,k_0,\rmd y_0)
+K_1(i_0,k_0,y_0;\rmd \chunku{x_1}{1}{N}) K_2(\chunku{x_1}{1}{N};i_1)= \bmeaspi(\rmd \chunku{x_1}{1}{N},i_1) \eqsp.
+\]
+The transition kernel $K_3$, defined in \eqref{eq:key-relation-3} is the full conditional in the decomposition
+\[
+\bmeaspi(\rmd \chunku{x_1}{1}{N},i_1) K_3(i_1,\chunku{x_1}{1}{N};k_1)= \bmeaspi(\rmd \chunku{x_1}{1}{N},i_1,k_1) \eqsp.
+\]
+The validity of the algorithm is guaranteed by noting that
+\[
+\bmeaspi(\rmd \chunku{x_1}{1}{N},i_1,k_1) K_4(\chunku{x_1}{1}{N},i_1,k_1; \rmd y_1)=
+\bmeaspi(\rmd \chunku{x_1}{1}{N},i_1,k_1, \rmd y_1) \eqsp.
+\]
+\subsection{Ergodicity of iterated SIR}
+\label{sup:sec:ergodicity}
+The ergodicity of iterated SIR has been studied in \cite{andrieu2018uniform} in the case when the conditional kernels are independent: $R_i(x^i; \rmd \chunkum{x}{1}{N}{i})= \prod_{j \neq i} \proposal(\rmd x^j)$ under the assumption that the likelihood is bounded $\likelihood_\infty= \sup_{x \in \rset^d} \likelihood(x) < \infty$. We extend the analysis to the case of dependent proposals. At iteration $k$, denote by $\chunku{X_k}{1}{N}$ the set of proposals, $I_k$ the proposal index and the conditioning proposal, $Y_k=X_k^{I_k}$. The algorithm goes as follows:
+\begin{enumerate}
+\item Set $X_{k+1}^{I_k}= Y_{k+1}$ and refresh the set of proposals by drawing $\chunkum{X_{k+1}}{1}{N}{I_k} \sim R_{I_k}(X_{k+1}^{I_k},\cdot)$.
+\item Compute the unnormalized importance weights $\omega_{k+1}^i= \likelihood(X_{k+1}^i)$, $i \in \{1,\dots,N\}$.
+\item Draw $I_{k+1} \in \{1,\dots,N\}$ with probabilities proportional to $\{\omega_{k+1}^i \}_{i=1}^N$.
+\item Set $Y_{k+1}= X_{k+1}^{I_{k+1}}$.
+\end{enumerate}
+The key of the analysis is to collapse the representation as to  only retain the conditioning index $I_k$ and the conditioning proposal $Y_k$. It is easily seen that $\{(I_k,Y_k) \}_{k \geq 0}$ is a Markov chain with Markov kernel defined for any $y \in \rset^d$ and $A \in \borel(\rset^d)$ by
+\begin{equation}
+\label{eq:kernel-marginal}
+P(i,y; j \times A)=  \int \updelta_y(\rmd x^i) R_i(x^i, \rmd \chunkum{x}{1}{N}{i}) \frac{\likelihood(x^j)}{\sum_{\ell=1}^N \likelihood(x^\ell)} \updelta_{x^j}(A) \eqsp.
+\end{equation}
+Consider the following assumptions:
+\begin{assumption}
+\label{assum:likelihood-bounded}
+The likelihood function $\likelihood$ is both lower and upper bounded, \ie\
+\begin{equation}
+\label{eq:definition-rho}
+\likeratio= \inf_{x \in \rset^d} \likelihood(x) \big/ \sup_{x \in \rset^d} \likelihood(x) > 0 \eqsp.
+\end{equation}
+\end{assumption}
+For $i \in \{1,\dots,N\}$ and $j \in \{1,\dots,N\} \setminus \{i\}$, we define for $x^i \in \rset^d$ and $A \in \borel(\rset^d)$,
+\begin{equation}
+\label{eq:definition-R-i-j}
+R_{i,j}(x^i,A)= \int R_i(x^i,\rmd \chunkum{x}{1}{N}{i}) \indi{A}(x^j) \eqsp.
+\end{equation}
+If $R_i(x^i,\rmd \chunkum{x}{1}{N}{i})= \prod_{\ell \neq i} \proposal(\rmd x^\ell)$, then $R_{i,j}(x^i,A)= \proposal(A)$. If the Markov kernel $R_i$ satisfies \eqref{eq:condition-kernel}, then $R_{i,j}(x,A)= M^{|j-i|}(x,A)$.
+\begin{assumption}
+\label{assum:marginal-kernels}
+There exist $C \in \borel(\rset^d)$  and $\minor > 0$ such that, for any $i \neq j \in \{1,\dots, N\}$
+\begin{enumerate}
+\item $\sum_{j=1}^N R_{i,j}(x^i, C) > 0$ for any $x^i \in \rset^d$.
+\item For any  $x^i \in C$ and $A \in \borel(\rset^d)$,  $R_{i,j}(x^i,A) \geq \minor \proposal(A)$.
+\end{enumerate}
+\end{assumption}
+\begin{theorem}
+\label{theo:uniform-ergodicity-ISIR}
+Assume \Cref{assum:likelihood-bounded} and \Cref{assum:marginal-kernels}. Then the conditional ISIR kernel $P$ (see \eqref{eq:kernel-marginal}) is irreducible, positive recurrent and ergodic. If for all $i \in \{1,\dots,N\}$, $R_i(x^i; \rmd \chunkum{x}{1}{N}{i})= \prod_{j \neq i} \proposal(\rmd x^j)$, then $P$ is uniformly ergodic.
+\end{theorem}
+\begin{proof}
+For all $i \in \{1,\dots,N\}$ and $y \in C$ and $A \in \borel(\rset^d)$ we get
+\begin{align*}
+P(i,y; j \times A)
+&= \int \updelta_{y}(\rmd x^i) R_i(x^i; \rmd \chunkum{x}{1}{N}{i}) \frac{\likelihood(x^j)}{\sum_{\ell=1}^N \likelihood(x^\ell)} \updelta_{x^j}(A) \geq \frac{\likeratio \minor}{N} \proposal(A) \eqsp.
+\end{align*}
+Hence the set $D= \{1\dots,N\} \times C$ is small. Under \Cref{assum:marginal-kernels}, we get
+\[
+P(i,y; D) \geq \frac{\kappa}{N} \sum_{j=1}^N R_{i,j}(y,C) > 0 \eqsp,
+\]
+showing that $D$ is accessible. Since $D$ is accessible and small and $\bar{\measpi}(i \times \rmd y)= \frac{1}{N} \measpi(\rmd y)$ is invariant by $P$ , then $P$ is positive recurrent (see \cite{douc:moulines:priouret:2018}, Theorem~10.1.6). If the proposals are independent, the whole state space is small and hence the Markov kernel $P$ is uniformly geometrically ergodic.
+\end{proof}
+The conditions for the \IFIS\ algorithm are similar.

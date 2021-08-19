@@ -1,0 +1,58 @@
+
+We now consider the scenario where $\likelihood(x)\rho(x)>0$ for any $x\in\mathbb{R}^{d}$
+and we want to compute an unbiased estimate of
+\begin{align*}
+\const= & \int_{\mathbb{R}^{d}}\likelihood(x)\rho(x)\rmd x\\
+\end{align*}
+and design MCMC to sample from $\pi(x)\propto \likelihood(x)\rho(x)$. The idea proposed here in is essentially practically useless but at least show that we do not have to truncate the space. We can include it in a small subsection in the paper.
+
+
+We use the following identity valid for any $\Omega\subset\mathbb{R}^{d}$, $\rho(\Omega)\neq 0$,
+\begin{align*}
+\const & =\int_{\Omega}\likelihood(x)\rho(x)\rmd x+\int_{\Omega^{c}}\likelihood(x)\rho(x)\rmd x\\
+ & =\int_{\Omega}\rho(x)\rmd x\int_{\Omega}\likelihood(x)\rho_{\Omega}(x)\rmd x+\int_{\Omega^{c}}\likelihood(x)\rho(x) \rmd x\\
+ & =\int_{\mathbb{R}^{d}}\mathbb{I}_{\Omega}(x)\rho(x)\rmd x~\const_{\Omega}~+\int_{\mathbb{R}^{d}}\mathbb{I}_{\Omega^{c}}(x) \likelihood(x)\rho(x)\rmd x
+\end{align*}
+where
+\[
+\const_{\Omega}:=\int_{\Omega}\likelihood(x)\rho_{\Omega}(x)\rmd x,~~\rho_{\Omega}(x):=\frac{\rho(x)\mathbb{I}_{\Omega}(x)}{\rho(\Omega)},~~\rho(\Omega)=\int_{\Omega}\rho(x)\rmd x.
+\]
+We will select $\Omega$ large enough so that $\rho(\Omega)\approx1.$Hence
+we can sample from $\rho_{\Omega}(x)$ very efficiently by rejection.
+We can also obtain an unbiased estimate $\estConst_{\Omega}$ of
+$\const_{\Omega}$ using the estimator described before, just sample from $\rho_{\Omega}(x)$ instead of $\rho(x)$.
+
+For $X'\sim\rho$, we now consider the following unbiased estimator of
+$\const$
+\begin{align*}
+\estConst= & I(X'\in\Omega)\estConst_{\Omega}+I(X'\in\Omega^{c})\likelihood(X')>0.
+\end{align*}
+Obviously with probability $\rho(\Omega)$, we simply have $\estConst=\estConst_{\Omega}$
+as expected.
+
+Using this estimator, we can also build an extended proposal and target
+so as design MCMC sampling exactly from $\pi$. For sake of simplicity,
+I consider the case where $\estConst_{\Omega}$ is obtained by averaging
+$\estConst_{\Omega}^{i}=\likelihood(X^{i})$ for $X^{i}\sim\rho_{\Omega}$
+for $i=1,...,N$ but we can obviously use the more fancy estimator
+with stopping times.
+
+We then consider the extended proposal
+\[
+q(x_{1:N},x',i,y)=\rho(x')\prod_{j=1}^{N}\rho_{\Omega}(x_{j}).\left\{ \mathbb{I}(x'\in\Omega)\frac{\likelihood\left(x_{i}\right)}{\sum_{j}\likelihood(x_{j})}\delta_{x_{i}}(y)+\mathbb{I}(x'\in\Omega^{c})\delta_{N+1}(i)\delta_{x'}(y)\right\}
+\]
+
+and the `usual' extended target distribution
+\begin{align*}
+\overline{\pi}(x_{1:N},x',i,y)=q(x_{1:N},x',i,y) & \frac{\estConst}{\const}.
+\end{align*}
+Then it follows that
+\begin{align*}
+\overline{\pi}(x_{1:N},x',i,y) & =\pi\left(y\right)\{ \mathbb{I}(y\in\Omega)\frac{\rho_{\Omega}(x')}{N}\prod_{j\neq i}\rho_{\Omega}(x_{i}).\delta_{y}(x_{i})\\
+ & +\mathbb{I}(y\in\Omega^{c})\delta_{N+1}(i)\prod_{j=1}^{^{N}}\rho_{\Omega}(x_{i}).\delta_{y}(x')\}\\
+\end{align*}
+
+Hence we have as desired
+\[
+\overline{\pi}(y)=\pi\left(y\right).
+\]

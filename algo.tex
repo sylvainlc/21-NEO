@@ -1,0 +1,26 @@
+We present here the algorithm to estimate the normalising constant of $\rho(x|\mathcal{D}) \propto L(\mathcal{D}; x)\rho(x)$ on $\Omega$, given some data $\mathcal{D}$ and a likelihood function $L:x\mapsto L(\mathcal{D}; x)= L(x)$.
+
+
+\begin{algorithm}[H]
+ \KwData{$N$ number of particles, $\phi$, $\Omega$, $\rho$, $\mathcal{D}$, $L$}
+ \KwResult{$Z = \int_\Omega L(x)\rho(x)\rmd x$}
+ \For{$i=0$ \KwTo $N$}{
+ initialize $ X^i\sim\rho$\;
+ propagate until $\tau^+( X^i)$ and $\tau^-( X^i)$\;
+ $k=0$\;
+ \While{$\phi^k( X^i)\in \Omega$}{
+ $k=k+1$\;}
+ $\tau^+( X^i)=k$\;
+ $k=0$\;
+  \While{$\phi^k( X^i)\in \Omega$}{
+ $k=k-1$\;}
+ $\tau^-( X_i)=k$\;
+ $Z_i=\sum_{k=\tau^{-}( X^i)+1}^{\tau^{+}( X^i)-1}L(\phi^{k}( X^i)) w_k(X^i)$\;
+ }
+ Compute $Z=\tfrac{1}{N}\sum_{i=1}^{N}Z
+_i$\;
+ \KwRet{Z}\;
+\end{algorithm}
+
+For our implementation, we consider dissipative Hamiltonian dynamics.
+

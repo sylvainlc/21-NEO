@@ -1,0 +1,76 @@
+The simultaneous simulation from a challenging distribution $\pi(\cdot)\propto\rho(\cdot)\likelihood(\cdot)$ and approximation of its intractable normalizing constant $\const=\int \rho(x) \likelihood(x) \rmd x$ remains a significant issue for generative models and Bayesian inference. In a Bayesian setting, $\rho$ is a prior distribution and $\likelihood$ is the likelihood. In Generative Adversarial Networks (GAN) \cite{turner:hung:2019, che:bengio:2020}, $\rho$ is the generator and $\likelihood$ is derived from the discriminator.
+This problem has attracted wealth of  contributions; see for example \citep{chenetal00}. Simulation approaches rarely rely on output from the target, since 
+it either produces unreliable substitutes, as in the discredited harmonic mean estimator of \cite{newton:raftery:1994} or difficulties of implementation as in path sampling \citep{gelman1998simulating} and nested sampling \citep{skilling2006nested,chopin:robert:2010}. Many approaches are based on Importance Sampling (IS) techniques, the most popular being Annealed Importance Sampling (AIS) \citep{neal:2001, wu:burda:grosse:2016,ding2019learning} and Sequential Monte Carlo (SMC) \citep{del2006sequential}.
+%also known as Jarzynski--Crooks identity \citep{jarzynski1997nonequilibrium, crooks1998nonequilibrium} in physics or generative models and Sequential Monte Carlo (SMC) samplers \citep{del2006sequential,heng2017controlled,zhou2016toward}. These methods consists in constructing estimators of $\const$ or $\log(\const)$ by propagating %for $T-1$ steps
+%some initial random samples drawn from $\rho$ or from an alternative distribution. 
+Other proposals have focused solely on the normalizing constant approximation, as in \cite{chib:1995} or the antagonistic solutions of \cite{geyer:1993,gutmann:hyvarinen:2012}. When these estimates are unbiased, they can be used to obtain ELBO to design Variational Auto-Encoders (VAE) \citep{mnih2016variational}.
+\textcolor{red}{Arno: this bibliography review completely ignores the approach where one builds an unbiased estimate of $Z$ using normalizing flows literature which is quite closely related to what we are doing, we had those references in the previous draft and they should be included}
+
+%Consider a distribution $\pi(\rmd x)$ on $\rset^{d}$ admitting a
+%density \wrt~the Lebesgue measure $\rmd x$ given for any $x \in \rset^d$ by 
+%$ \pi(x) =\rho(x) \likelihood(x) / \const$, where
+%$ \const = \int \rho(x) \likelihood(x) \rmd x$, $\rho$ is a
+%probability density one can sample from, $\likelihood$ and $ \rho$ can
+%be evaluated pointwise but $Z$ is
+%intractable.  We are interested in this paper in estimating the normalizing constant/evidence $Z$, sampling
+%from $\pi$, and computing a tight Evidence Lower Bound (ELBO) for $\log(Z)$.
+%computing integrals of the form
+%\begin{equation}
+% \label{eq:def_estimator_normal_const}
+%\const =  \int \likelihood(x) \mu(x) \rmd x \eqsp.
+%\end{equation}
+
+%\arnaud{I would restrict myself to $g(t)=t$ in intro and just mention it later on}
+%\begin{equation}
+% \label{eq:def_estimator_normal_const}
+%\const_g =  \int g(\likelihood(q)) \mu(q) \rmd q \eqsp, \, \text{ for } g : %\rset \to \rset \eqsp.
+%\end{equation}
+%  An important choice for model selection is
+%$g(t) = t$, for any $t \in \rset$, for which $\const_g = \const$ is the %evidence. Other choices such that
+%$g=\1_{\coint{c,\plusinfty}}$, for $c \in \rset$ are also of interest; such quantities play a key role in nested sampling (see \eg~\cite{skilling2006nested}).
+% As in Hamiltonian Monte Carlo
+%\citep{duane1987hybrid,Neal2011}, we will proceed using an extended target %density
+%w.r.t. Lebesgue measure on $\mathbb{R}^d\times \mathbb{R}^d$ for $x = (p,q ) \in \rset^{2d}$
+%by
+%\begin{align}
+%\label{eq:targetextended}
+%\pi(x)= \eta(q)\plaw(p)
+%\end{align}
+%where $\plaw$ is a density on $\rset^d$. Note that $\const_g$ can be rewritten as
+
+%\begin{equation}
+%\label{eq:normalizingconstant}
+%\const_g=\int g(\likelihood(q)) \rho(q, p) \rmd q \rmd p  \eqsp,\quad %\rho(q,p)=\mu(q) \plaw(p) \eqsp.
+%\end{equation}
+
+%State-of-the-art methods to compute normalizing constants include Annealed %Importance Sampling (AIS) \citep{neal:2001} also known as Jarzynski--Crooks %identity \citep{jarzynski1997nonequilibrium, crooks1998nonequilibrium} in %physics and Sequential Monte Carlo (SMC) samplers %\citep{del2006sequential,heng2017controlled,zhou2016toward}. These methods %consists in constructing estimators of $Z$ or $\log(Z)$ by propagating %for %$T-1$ steps
+%some initial random samples drawn from $\rho$. As these estimates are unbiased, %they can be used to obtain ELBO to design Variational Auto-Encoders (VAE) \citep{mnih2016variational}.
+% using some time-inhomogeneous MCMC kernels bringing them closer to $\pi$. % and rely on an IS argument on $\rset^{dT}$ to estimate $Z$. %This has been pursued, for example, in \citep{salimans2015markov,zhou2016toward,wu2020stochastic}.
+% Similarly, Nested Sampling (NS) \citep{skilling2006nested} propagates samples drawn initially from $\rho$ using a sequence of inhomogeneous MCMC kernels.
+
+\cite{rotskoff:vanden-eijden:2019} have introduced a new IS technique using partly deterministic proposals.
+% the non-equilibrium stationary density of
+This approach is inspired by Hamiltonian Monte Carlo (HMC) techniques in the sense that proposals are sampled from the flow of a dynamical system. However, this algorithm is parallelizable, being based in multiple random starting states drawn from the prior distribution. In addition, the dynamical system is dissipative, hence does not leave the Hamiltonian invariant and  is not reversible. 
+However, the proposed estimator of the normalizing constant cannot be computed exactly as the theory requires the full knowledge of the continuous-time flow. In practical implementation, a discretization is required which induces approximation errors.
+\footnote{This is done in the code provided by
+  \cite{rotskoff:vanden-eijden:2019} but not detailed in the
+  paper.}
+  Further, checking the assumptions for unbiasedness is challenging.
+  
+  We build in this work  a new (discrete-time) Invertible Flow Non Equilibrium IS estimator  \IFIS\ for $Z$ that circumvents the issues of the original estimator \cite{rotskoff:vanden-eijden:2019}. \IFIS~ method relies on the iterated calls to a map $\transfo : \rset^{d} \to \rset^{d}$.
+When $\transfo$ is a conformal Hamiltonian integrator \citep{francca2019conformal}, \IFIS~ constructs an estimate of the normalizing constant from \emph {optimization paths} from random starting points. 
+Moreover, contrary to the previous approach, the \IFIS~estimator is not based on random stopping times and remains unbiased under virtually no assumptions. Finally, \IFIS\ lends itself well to massive parallelization.
+As illustrated in our numerical experiments, \IFIS\ improves the efficiency of state-of-the-art methods in a various set of experiments.
+In \Cref{sec:extensions}, we present  different domains of applications for \IFIS\ that demonstrate its generality and the reach of its efficiency.
+  
+  Our contributions can be summarized as follows:
+\paragraph{Claims}
+\begin{enumerate}[label=\textbf{(\roman*)}]
+    \item We introduce a novel IS estimator, \IFIS, which builds and relies on optimization paths to approach efficiently normalizing constants. We show with extensive numerical experiments the performance of \IFIS\ compared to other state-of-the-art methods.
+    \item We extend our approach to a Variational Inference setting, building from \IFIS\ a VAE competitive to other recent state-of-the-art methods for learning VAEs.
+    \item We present new MCMC samplers that build upon \IFIS. 
+\end{enumerate}
+ % by transporting initial \iid~samples from the prior $\rho$ to  regions of the state space making significant contributions to the computation of $Z$.
+
+%****We will say then something on the applications once they will be done***
+

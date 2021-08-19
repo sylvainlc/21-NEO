@@ -1,0 +1,122 @@
+\let\zz\[\let\zzz\]
+
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2020
+
+% ready for submission
+% \usepackage{neurips_2020}
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2020}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+%     \usepackage[final]{neurips_2020}
+
+% to avoid loading the natbib package, add option nonatbib:
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{comment}
+
+\makeatletter
+\def\set@curr@file#1{%
+  \begingroup
+    \escapechar\m@ne
+    \xdef\@curr@file{\expandafter\string\csname #1\endcsname}%
+  \endgroup
+}
+\def\quote@name#1{"\quote@@name#1\@gobble""}
+\def\quote@@name#1"{#1\quote@@name}
+\def\unquote@name#1{\quote@@name#1\@gobble"}
+\makeatother
+\usepackage{graphics}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{enumitem}
+\usepackage{bm}
+\usepackage{bbm}
+\usepackage{booktabs} % for professional tables
+% hyperref makes hyperlinks in the resulting PDF.
+% If your build breaks (sometimes temporarily if a hyperlink spans a page)
+% please comment out the following usepackage line and replace
+% \usepackage{icml2019} with \usepackage[nohyperref]{icml2019} above.
+%\usepackage{hyperref}
+
+
+%\usepackage[textwidth=4cm,textsize=footnotesize]{todonotes}
+\usepackage[disable]{todonotes}
+
+
+%% our packages
+\usepackage{mathtools}
+\usepackage{amsmath,amssymb, amsthm}
+\usepackage[nottoc]{tocbibind}
+\usepackage{easyeqn}
+\usepackage{xargs}
+\usepackage{upgreek}
+\usepackage{ifthen}
+\usepackage{paracol}
+\usepackage{url}
+\usepackage{stmaryrd}
+
+%\usepackage[numbers]{natbib}
+% Attempt to make hyperref and algorithmic work together better:
+%\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+
+
+%% Our definitions go here
+%\newcommand{\todo}[1]{{\bf \color{red} (TODO) #1}}
+
+\usepackage{aliascnt}
+\usepackage{cleveref}
+
+
+\let\[\zz\let\]\zzz
+
+\usepackage{amsthm}
+
+\makeatletter
+\newtheorem{theorem}{Theorem}
+\crefname{theorem}{theorem}{Theorems}
+\Crefname{Theorem}{Theorem}{Theorems}
+
+
+\newaliascnt{proposition}{theorem}
+\newtheorem{proposition}[proposition]{Proposition}
+\aliascntresetthe{proposition}
+\crefname{proposition}{proposition}{propositions}
+\Crefname{Proposition}{Proposition}{Propositions}
+
+\newaliascnt{lemma}{theorem}
+\newtheorem{lemma}[lemma]{Lemma}
+\aliascntresetthe{lemma}
+\crefname{lemma}{lemma}{lemmas}
+\Crefname{Lemma}{Lemma}{Lemmas}
+
+\newaliascnt{corollary}{theorem}
+\newtheorem{corollary}[corollary]{Corollary}
+\aliascntresetthe{corollary}
+\crefname{corollary}{corollary}{corollaries}
+\Crefname{Corollary}{Corollary}{Corollaries}
+
+\newtheorem{definition}{Definition}
+\crefname{definition}{definition}{definitions}
+\Crefname{Definition}{Definition}{Definitions}
+
+\newtheorem{remark}{Remark}
+\crefname{remark}{remark}{remarks}
+\Crefname{Remark}{Remark}{Remarks}
+
+
+\newtheorem{assumption}{\textbf{H}\hspace{-3pt}}
+\Crefname{assumption}{\textbf{H}\hspace{-3pt}}{\textbf{H}\hspace{-3pt}}
+\crefname{assumption}{\textbf{H}}{\textbf{H}}

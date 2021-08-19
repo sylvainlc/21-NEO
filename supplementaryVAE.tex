@@ -1,0 +1,71 @@
+
+\subsection{VAE experiments}
+\label{supsec:vae_exps}
+We detail in this section \InFiNE\ VAE with $N$ samples (similarly to the IWAE algorithm). Recall that for each sample,  a trajectory of length $K$ is produced. 
+For simplicity, we use $N=1$ in all our experiments to outline \IFIS\ VAE in several experimental settings. It is expected that extension to $N > 1$ will further improve the results.
+%Conclusions drawn on the \InFiNE VAE however still hold for the case $N>1$.
+Recall that the  lower bound $\elboneq$ is 
+\begin{align*}
+    \elboneq(\theta, \phi; y) &= \int_{} \proposal_N( \chunku{x}{1}{N})   \log \estConstC{\chunku{x}{1}{N}} \rmd \chunku{x}{1}{N}\eqsp,\\
+&= \int_{} \prod_{i=1}^N q_\phi(x^i\mid y)   \log\left( N^{-1}\sum_{i=1}^N\sum_{k=0}^K w_k(x^i) \frac{p_\theta(y, \transfo^k(x^i))}{q_\phi(\transfo^k(x^i)\mid y)}\right)\rmd \chunku{x}{1}{N}\eqsp.
+\end{align*}
+Assume here that $q_\phi$ is amenable to the reparameterization trick, that is, there exist some diffeomorphism $V_{\phi,y}$ and some fixed pdf $\densgauss$, such that sampling $x\sim q_\phi(\cdot\mid y)$ boils down to sampling $\epsilon\sim\densgauss$ and set $x = V_{\phi,y}(\epsilon)$.
+In the particular case where $N=1$, an estimator of the ELBO and of its gradient are given by
+\begin{align*}
+    &\widehat{\mathcal{L}}_{\IFIS}(\theta, \phi; y) = \log \sum_{k=0}^K w_k(x) \frac{p_\theta(y, \transfo^k(x))}{q_\phi(\transfo^k(x)\mid y)}\eqsp, \eqsp \text{ where } x\sim q_\phi(\cdot\mid y)\eqsp,\\
+    &\nabla \widehat{\mathcal{L}}_{\IFIS}(\theta, \phi; y) = \nabla\log \sum_{k=0}^K w_k(V_{\phi,y}(\epsilon)) \frac{p_\theta(y, \transfo^k(V_{\phi,y}(\epsilon)))}{q_\phi(\transfo^k(V_{\phi,y}(\epsilon))\mid y)}\eqsp, \eqsp \text{ where } \epsilon \sim \densgauss\eqsp.
+\end{align*}
+This is the setting we consider in our experiments. More generally, inspired by the IWAE approach, we can write an estimator of the ELBO and of its gradient as
+\begin{align}
+\label{eq:gradient_elboneq}
+\nonumber
+    &\widehat{\mathcal{L}}_{\IFIS} (\theta, \phi; y) = \log\left( N^{-1}\sum_{i=1}^N\sum_{k=0}^K w_k(x^i) \frac{p_\theta(y, \transfo^k(x^i))}{q_\phi(\transfo^k(x^i)\mid y)}\right)\eqsp, \eqsp \text{ where } \chunku{x}{1}{n}\simiid q_\phi(\cdot\mid y)\eqsp,\\
+    &\nabla \widehat{\mathcal{L}}_{\IFIS} (\theta, \phi; y) = \sum_{i=1}^N \varpi_i \nabla\log\left( \sum_{k=0}^K w_k(V_{\phi,y}(\epsilon^i)) \frac{p_\theta(y, \transfo^k(V_{\phi,y}(\epsilon^i)))}{q_\phi(\transfo^k(V_{\phi,y}(\epsilon^i))\mid y)}\right)\\
+&\hspace{2.6cm}=\sum_{i=1}^N \varpi_i \nabla\log\estConstC{V_{\phi,y}(\epsilon^i)} \eqsp, \eqsp \text{ where } \chunku{\epsilon}{1}{n} \simiid \densgauss\eqsp,
+\end{align}
+where $\varpi_i = \estConstC{x^i}/(N\estConstC{\chunku{x}{1}{n}})$.
+\begin{algorithm}[h]
+\label{alg:sup:vae}
+\caption{\IFIS\ VAE, trajectory length $K$, and $N$ samples}
+\begin{algorithmic}
+   \STATE {\bfseries Input:} batch of samples $x$, latent dim $d$.
+   \STATE $(\mathbf{\mu}, \log\, \mathbf{\sigma}) \leftarrow EncoderNeuralNet_\phi(x)$.
+   \STATE Sample $N$ initial position and momentums: $q_i \sim \mathcal{N}(\mathbf{\mu},\,\operatorname{diag}(\mathbf{\sigma}^{2}))$ and $p_i \sim \mathcal{N}(0, \mathbf{I}_d)$.
+   \FOR{$i=1$ {\bfseries to} $N$}
+   \STATE Compute $\transfo^k(q_i, p_i)$
+   \textit{ This implies forward / backward passes in the decoder to get} $\nabla \log p_\theta(q^k_i)$.
+   \STATE Compute $\varpi_i$.
+   \ENDFOR
+   \STATE Compute the $\ELBO_{\theta, \phi}$ gradient estimator \eqref{eq:gradient_elboneq}.
+   \STATE SGD update of parameters $(\theta, \phi)$ using the gradient estimatior.
+\end{algorithmic}
+\end{algorithm}
+
+\Cref{tab:vae_results} displays the Negative loglikelihood estimates using both IS and \IFIS\ on the FashionMNIST dataset \cite{xiao2017fashion}. The settings are the same than those used in the MNIST experiment. The conclusions are similar:  the \IFIS\ estimate is almost always better than the IS estimate, by a large margin on small dimensions. The InFiNE VAEs are always better than standard VAEs, and better than IWAE with $N=30$ when the dimension of the latent space is small to moderate. When the dimension of the latent space increases ($d=50$), the  performance differences become relatively small.
+\begin{table*}[h]
+\centering
+\caption{NLL estimates for VAE models on FashionMNIST for different latent space dimensions.}
+\label{tab:vae_results}
+\begin{tabular}{c|c|c||c|c||c|c||c|c|}
+\cline{2-9}
+ & \multicolumn{2}{c||}{$d = 4$} & \multicolumn{2}{c||}{$d = 8$} & \multicolumn{2}{c||}{$d = 16$} & \multicolumn{2}{c|}{$d = 50$} \\ \hline
+\multicolumn{1}{|c|}{model} & IS & \InFiNE  & IS & \InFiNE& IS  & \InFiNE & IS & \InFiNE \\ \hline
+\multicolumn{1}{|c|}{VAE} & $240.61$&$240.19$&$235.78$&$235.73$&$235.02$&$234.96$&$234.82$&$234.83$\\ %\hline
+\multicolumn{1}{|c|}{IWAE, $N=5$} & $239.66$&$239.27$&$234.05$&$233.98$&$233.12$&$233.12$&$233.52$&$233.46$ \\ %\hline
+\multicolumn{1}{|c|}{IWAE, $N=30$} & $239.25$&$238.47$&$233.63$&$233.49$&$233.01$&$232.71$&$232.88$&$232.76$ \\ \hline
+\multicolumn{1}{|c|}{\InFiNE\ VAE, $K=3$} & $238.64$&$237.91$&$233.49$&$233.48$&$233.26$&$233.09$&$233.33$&$233.35$ \\ %\hline
+\multicolumn{1}{|c|}{\InFiNE\ VAE, $K=10$} & $238.89$&$238.46$&$233.51$&$233.45$&$233.24$&$233.15$&$233.28$&$233.26$ \\ \hline
+\end{tabular}
+\end{table*}
+
+%\subsection{VAE algorithm}
+%\label{subsec:vae_algo}
+
+
+%Inputs: Select a batch of samples ${x}$
+%\begin{enumerate}[wide, labelwidth=!, labelindent=0pt, %label=(\arabic*)]
+%\item For $i \in [N]$, compute $\{\transfo^k(X_{n+1}^i)\}_{k=1}^K$
+%\item Draw $I_{n+1} \sim %\operatorname{Cat}[(\estConstC{X_{n+1}^{i}})_{i \in [N]}]$
+%\item Draw $K_{n+1} \sim \operatorname{Cat}[(\omega_{k,n+1})_{k=0}^K$
+%\end{enumerate}
+

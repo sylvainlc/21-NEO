@@ -1,0 +1,55 @@
+\subsection{ELBO for parameter tuning and variational auto-encoders}\label{subsec:VAE}
+%The performance of the $\IFIS$ estimators depend crucially on the non-equilibrium transformations. Consider here a family of invertible flows $\{ \transfo_{k,\psi} \, : \, \psi \in \rset^{p}\}_{k\in\nsets}$ and estimate $\psi$ optimizing a variational criterion. For simplicity of notation, for the moment, we will omit parameters $\psi$ in the following.
+%Moreover, notice that the unbiased estimation of a normalizing constant we provide is all that is required to define an ELBO for learning generative models, such as a VAE \cite{kingma:welling:2013}.
+
+From high dimensional observations $x$, Variational Auto-Encoders (VAE) define a likelihood model building on some latent variables $z\in\rset^q$ as 
+\begin{equation}
+p_\theta(x) = \int p_\theta(x\mid z) p(z) \rmd z = \int p_\theta(x,z) \rmd z\eqsp.
+\end{equation}
+Introducing a parametric family of distributions $\{q_\phi(\cdot\mid x)\}$, $(\theta,\phi)$ can be jointly estimated by optimizing a proxy of the log-likelihood of the observations, the Evidence LOwer Bound (ELBO) by noting that  
+\begin{align}
+\log p_\theta(x)  &= \log \int \frac{p_\theta(x,z) }{q_\phi(z\mid x)} q_\phi(z\mid x)\rmd z \nonumber\\
+&\geq \int \log\left(\frac{p_\theta(x,z)}{q_\phi(z\mid x)}\right) q_\phi(z\mid x)\rmd z\eqsp,\label{eq:elbo}% = ELBO(\theta, \phi;x)\eqsp,\label{eq:elbo}
+\end{align} 
+using Jensen's inequality. The right-hand side of \eqref{eq:elbo} defines the usual ELBO which can be optimized easily \emph{via} stochastic gradient descent.
+
+The $\IFIS$ estimator provides an appealing alternative to obtain an unbiased estimation of \eqref{eq:elbo}:  
+\begin{align*}
+\log p_\theta(x) %= \log \int \frac{p_\theta(x,z) }{q_\phi(z\mid x)} q_\phi(z\mid x)\rmd z\\&
+ &=\log \int\sum_{k=0}^{K}\frac{w_{\phi,k}(z) p_\theta(x,\transfo^k(z)) }{q_\phi(\transfo^k(z)\mid x)}  q_\phi(z\mid x)\rmd z\\
+&\geq  \int \log\left( \sum_{k=0}^{K}\frac{w_{\phi,k}(z) p_\theta(x,\transfo^k(z)) }{q_\phi(\transfo^k(z)\mid x)}\right)  q_\phi(z\mid x)\rmd z\\
+&= \elboneq(\theta, \phi;x)\eqsp.
+\end{align*}
+This quantity defines an Importance Weighted Auto Encoder \cite{burda:grosse:2015}, which we refer to as Non-Equilibrium Hamiltonian VAE (NeqVAE). 
+As discussed in \Cref{subsec:NISestimators}, the performance of the $\IFIS$ estimators depend crucially on the non-equilibrium transformations $\{T^k\}_{k\in\zset}$. Choosing the dissipative Hamiltonian introduced in \Cref{subsec:NISestimators} allows to consider a family of invertible flows which depends on the parameter $\theta$ which is automatically tuned to the target distribution. \Cref{sec:exps} provides  experiments to illustrate the performance of this NeqVAE approach.
+
+
+
+%\begin{tabular}{ *2c }    \toprule
+%\emph{10 ep., $d=64$, $K\in\{3,5,8\}$} & \emph{MNIST}  \\\midrule
+%VAE    &  97.50  \\ 
+%IWAE - $M=5$ & 96.98\\ 
+%IWAE - $M=30$ & 96.97  \\
+%NeqVAE - $\gamma = 0.1$, $h=0.1$ & $97.23\|97.22\|98.31$  \\
+%NeqVAE - $\gamma = 0.3$, $h=0.1$ &  $97.25\|97.08\|101.99$\\
+%NeqVAE - $\gamma = 0.5$, $h=0.1$ & $96.90\|97.42\| \mathrm{Na}$ \\
+%NeqVAE - $\gamma = 0.1$, $h=0.05$ & $97.20\|97.02\|97.00$ \\
+%NeqVAE - $\gamma = 0.1$, $h=0.01$ & $95.79\|95.77\|97.37$ \\
+%NeqVAE - $\gamma = 0.3$, $h=0.01$ & $97.58\|97.28\|97.18$ \\
+%NeqVAE - $\gamma = 0.5$, $h=0.01$ & $97.58\|97.69\|97.03$ \\
+%\bottomrule
+% \hline
+%\end{tabular}
+
+%\begin{tabular}{ *2c }    \toprule
+%\emph{10 ep., $d=64$, $K\in\{3,5,8\}$} & %\emph{FashionMNIST}  \\\midrule
+%VAE    &  238.90  \\ 
+%IWAE - $M=5$ & 238.68\\ 
+%IWAE - $M=30$ &  239.28 \\
+%NeqVAE - $\gamma = 0.1$, $h=0.01$ & $239.87\|239.17\|239.45$ \\
+%NeqVAE - $\gamma = 0.3$, $h=0.01$ & $239.70\|239.60\|239.53$ \\
+%NeqVAE - $\gamma = 0.5$, $h=0.01$ & $239.37\|239.75\|239.39$ \\
+%\bottomrule
+% \hline
+%\end{tabular}
+

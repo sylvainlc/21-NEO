@@ -1,0 +1,211 @@
+Consider a distribution $\rho$ on $\rset^{d}$ with
+support $\mso$ and a $\rmC^1$-diffeomorphism
+$\transfo:\rset^{d}\to \rset^{d}$. We stress that no assumption on
+$\mso$ is necessary and that our setting includes the case
+$\mso=\rset^d$. However, considering general domains $\mso$ allows us
+in some situations to ensure variance reduction of our new IS
+estimator and to take into account prior knowledge on $\rho$.  We present first our IFIS method to construct an unbiased
+estimator of $\int f(x) \rho(x) \rmd x$. Second, we propose a specific
+instance of this methodology for computing $Z$ and
+approximating $\pi$ based on a dissipative Hamiltonian dynamics.
+% we not restrict our study to density $\rho$ of
+% the form \eqref{eq:normalizingconstant}.  Although the target $\pi$ in
+% \eqref{eq:targetextended} is defined on $\mathbb{R}^{2d}$, we consider
+% its restriction to some set $\mso \subset \rset^{d}$ such that
+% \begin{equation}
+% Z_{\mso}=\int_{\mso} L(q) \rho(q, p) \rmd q \rmd p \approx Z
+% \end{equation}
+% and sampling from the density $\rho_\mso(x) \propto \rho(x) \mathbb{I}(x \in \mso)$ can be achieved efficiently by rejection; e.g. select $\mso=\{x\in \mathbb{R}^{d}: 10^{-7}<H(x)<10^{10}\}$ **rewrite***. We present in this section how to obtain an unbiased estimator of $Z_{\mso}$.
+
+
+\subsection{Integration using non-equilibrium paths} \label{sec:estimator}
+ Define by
+induction for any $k \in \nsets$, $\transfo^{k}=\transfo\circ\transfo^{k-1}$, $\transfo^{0}=\Idd_{d}$ and similarly $\transfo^{-k}=\transfo^{-1}\circ\transfo^{-(k-1)}$.  
+If  $\transfo$ is measure-preserving for $\rho$, that is the pushforward density of $\rho$ by
+$\transfo$ is equal to $\rho$
+%, i.e. $\rho(\transfo^{-1}(x)) \Jac_{\transfo^{-1}}(x)= \rho(x)$)
+then any iterate $\transfo^k$, $k \in \zset$, can be used to construct
+an estimator of $\int f(x) \rho(x) \rmd x$.
+
+%\alaini{new}
+For a nonnegative sequence $(\varpi_k)_{k \in\zset}$,
+$\sum_{k\in \zset} \varpi_k=1$, we can set
+$N^{-1} \sum_{i=1}^N \sum_{k\in \zset} \varpi_k f(\transfo^k(X^i))$,
+where $X^{i}\overset{\text{iid}}{\sim}\rho$. In particular, Jensen
+inequality ensures that the resulting estimator has smaller variance
+than the crude Monte Carlo estimator
+$I_N^{\MC}= N^{-1} \sum_{i=1}^Nf(X^i)$.  IFIS aims at generalizing
+this construction using an invertible flow
+$\transfo$ for which $\rho$ is no longer invariant. This flow is designed
+using prior knowledge of $f$ to transport the samples $X^{1:N}$ to
+regions which are important for the computation of
+$\int f(x) \rho(x) \rmd x$.
+
+% \alaini{old}
+% In particular, it suffices to set $N^{-1} \sum_{i=1}^N f(\transfo^k(X^i))$, 
+% However, this estimator has the same variance as the usual
+% Monte Carlo estimator $N^{-1} \sum_{i=1}^N f(X^i)$ and no
+% gain of efficiency can be expected.
+% IFIS aims at defining estimators using dynamics $\transfo$
+% for which $\rho$ is no longer invariant, but designed using prior
+% knowledge of $f$ to transport the samples $X^{1:N}$ to regions which
+% are important for the computation of $\int f(x) \rho(x) \rmd x$. 
+% \alaini{fin old}
+
+Consider now a general transformation $\transfo$. %, possibly not measure preserving for $\rho$.  
+Our first step in our construction is to study
+ the distribution of $\transfo^{-k}(X)$ for $k \in \zset$
+and $X\sim \rho$. In the case $\mso \neq \rset^d$, %then the estimator is no longer unbiased and
+some caution has to be exercised to exit times of this dynamics from $\mso$.  We use the notation
+$\intentier{a}{b} = \{a,\dots, b\}$ for $a,b \in \zset$ and $\intentierU{b} = \intentier{1}{b}$ if $b \geq 1$. Define
+$\tau^{+} : \rset^d \to \nset$, $\tau^{-} : \rset^d \to \nset_-$, for
+$x \in \rset^d$ by
+\begin{align}
+\label{eq:definition-tau-+--}
+&\tau^{+}(x)=\inf\{k\geq 1\, :  \,  \transfo^{k}(x) \not \in \mso\} \eqsp, \\
+&\tau^{-}(x)=\sup\{k\leq -1\, :  \,  \transfo^{k}(x) \not \in \mso\} \eqsp,
+\end{align}
+with the convention $\inf \emptyset = +\infty$ and
+$\sup \emptyset = - \infty$, and define
+\begin{equation}
+  \label{eq:def_rmi}
+  \rmi = \{(x,k) \in \mso\times \zset\,:\, k \in
+\intentier{\tau^-(x)+1}{\tau^+(x)-1}\} \eqsp.
+\end{equation}
+If $\mso = \rset^{d}$, then $\tau^{+}(x) = \plusinfty$, $\tau^{-}(x) = -\infty$ for any $x \in \rset^d$ and
+$\rmi = \rset^{d} \times \zset$. For any $k \in \zset$, define $\rho_k : \rset^d \to \rset_+$ by
+\begin{equation}
+\label{eq:definition-rho-k}
+    \rho_k(x)= \rho(\transfo^k(x))  \absLigne{\JacOp{\transfo^k}(x)} \1_{\rmi}(x,k)\eqsp,
+\end{equation}
+where $\absLigne{\JacOp{\Phibf}(x)}$ denotes the absolute value of the determinant of the Jacobian matrix of a mapping $\Phibf$ evaluated at $x$. When $\mso = \rset^{d}$, then $\1_{\rmi}\equiv 1$ and
+$\rho_k$ is the push-forward measure of $\rho$ by $\transfo^{-k}$, \ie~the distribution of $\transfo^{-k}(X)$ for $X \sim \rho$.
+The following lemma generalizes this result to handle the case $\mso \neq \rset^{d}$.
+
+\begin{lemma}
+\label{theo:inf_non_eq_0}
+For any $k \in \zset$ and  measurable nonnegative function $f:\rset^d \to \rset_+$, we have
+\begin{equation}
+    \label{eq:inf_non_eq_av_0}
+    \int \dummy(y)    \rho_k(y)\rmd y =
+  \int \dummy(\transfo^{-k}(x)) \indi{\rmi}(x,-k)\rho(x)\rmd x  \eqsp.
+\end{equation}
+\end{lemma}
+\Cref{theo:inf_non_eq_0} shows that $\rho_k$ is the push-forward
+measure of $\indi{\rmi}(x,-k)\rho({x})$ by $\transfo^{-k}$. In addition, for
+$k \in \zset$, $ \int \indi{\rmi}(x,-k)\rho({x})\rmd x \in \rset^*_+$ implies that $\int \rho_k(x) \rmd x \in \rset^*_+$ and if
+for any $x \in \mso$, $\indi{\rmi}(x,-k) =
+1$, then $\int \rho_k(x) \rmd x = 1$ and $\rho_k$ is a probability density. 
+
+To understand our next derivation and the construction of IFIS, assume first that  $\1_{\rmi}(x,-k) = 1$ for any $x \in \mso$.  In this case,
+\begin{align}
+&\int f(y) \rho(y) \rmd y =
+\int f(\transfo^{-k}(x)) \rho(\transfo^{-k}(x)) |\JacOp{\transfo^{-k}}(x)|\rmd x 
+\\
+&=
+\int f(\transfo^{-k}(x)) \frac{\rho(\transfo^{-k}(x))}{\rho_k(\transfo^{-k}(x))} \rho(x) \rmd x \eqsp,
+\end{align}
+showing that the distribution $\rho_k$ can be used as an IS distribution to define an unbiased estimator
+$N^{-1}\sum_{i=1}^N f(\transfo^{-k}(X^i))\rho(\transfo^{-k}(X^i))/
+\rho_k(\transfo^{-k}(X^i))$  for $X^i\sim \rho$. However, if the condition $\1_{\rmi}(x,-k) = 1$ does not hold for almost all $x \in \mso$, then \Cref{theo:inf_non_eq_0} shows that $\rho_k$ is no longer a probability density. Yet, the same result establishes that integrals \wrt~$\rho_k$ can still be expressed as integral \wrt~
+$\rho$. However, even if $\rho_k$ can be normalized so that it defines a density on $\rset^d$, its support can be strictly smaller than $\mso$ and therefore, $\rho$ is not absolutely continuous \wrt~$\rho_k$. To address this issue, we consider in the sequel a linear combination of these measures $\sum_{k\in\zset} a_k \rho_k$ using a nonnegative sequence $(a_k)_{k \in\zset}$. Imposing $a_0 \neq 0$ ensures that the resulting measure has the same support as $\rho$ and can be used as importance distribution if it defines a density. This latter condition is formulated as follows. 
+\begin{assumption}
+  \label{assumption:z_ne_finite}
+  The nonnegative sequence $(a_k)_{k\in\zset}$ satisfies
+\begin{equation}
+\label{eq:def_z_ne}
+    \constT = 
+    \int\sum_{k\in \zset}  a_{-k} \rho_k(x) \rmd x %= \int\sum_{k\in \zset}  a_{-k} \rho(\transfo^k(x))  \absLigne{\JacOp{\transfo^k}(x)} \1_{\rmi}(x,k) \rmd x
+    < \infty\eqsp,
+  \end{equation}
+    where $\rho_k$ is defined by \eqref{eq:definition-rho-k}.
+  \end{assumption}
+  If $\sum_{k \in\zset} a_k < \plusinfty$,
+  \Cref{assumption:z_ne_finite} holds without restriction on $\transfo$
+  and $\mso$. In the case, if $a_k \equiv 1$,
+  \Cref{assumption:z_ne_finite} boils down to
+  $ \int\sum_{k= \tau^{-}(x)+1}^{\tau^{+}(x)-1} \rho(\transfo^k(x))
+  \absLigne{\JacOp{\transfo^k}(x)} \rmd x< \infty$. The former then inherently implies some conditions on the dynamics $\transfo$ and $\mso$ similar to the one required in the continuous-time setting by \cite{rotskoff:vanden-eijden:2019}. %However in such setting 
+  
+   Under
+  \Cref{assumption:z_ne_finite}, based on the flow $\transfo$, we can define the probability measure
+  $\rhoT(\rmd x)$ with density \wrt~the Lebesgue measure given for
+  any $x \in \rset^d$, by
+\begin{equation*}
+    \rhoT(x) =  \frac{1}{\constT}\sum_{k \in \zset} a_{-k} \rho_k(x)= \frac{1}{\constT} \sum_{k \in \zset} a_{-k} \rho(\transfo^k(x))  \absLigne{\JacOp{\transfo^k}(x)} \1_{\rmi}(x,k)\eqsp.
+  \end{equation*}
+  If we take $a_k \equiv 1$,  $\rhoT$ is the discrete-time
+  counterpart of the non-equilibrium density defined in
+  \citep[Eq. (6)]{rotskoff:vanden-eijden:2019}. The term
+  \textit{non-equilibrium} is coined since $\rhoT$ is different from $\rho$ if $\transfo$ does not
+  preserve $\rho$, $\rho$ being referred
+  in physics as the \textit{equilibrium distribution}. We would like to use
+  $\rhoT$ as an importance distribution to obtain an unbiased
+  estimator of $\int \dummy(x) \rho(x) \rmd x$.
+%  \begin{equation}
+%    \label{eq:estimator_first_exp_rho_ne}
+%I_N^{\IFIS} = N^{-1} \sum_{i=1}^N  f(\tilde{X}^i) %\rho(\tilde{X}^i)/\rhoT(\tilde{X}^i)   \eqsp ,\quad % \text{with $X^{1:N} \sim_{\mathrm{i.i.d}} \rhoT$}  %\eqsp. 
+%  \end{equation}
+  However, this raises two problems. First, it is unclear how to sample from $\rhoT$. Second, evaluating this density and thus the importance weights is in general not possible since $\constT$ is intractable. We address these two issues in the sequel to derive the IFIS estimator. From \Cref{theo:inf_non_eq_0}, we obtain the following important result.
+\begin{theorem}
+ \label{theo:inf_non_eq}
+ Assume \Cref{assumption:z_ne_finite}.  For any measurable nonnegative function $g:\rset^d \to \rset_+$, we have
+\begin{equation*}
+\label{eq:inf_non_eq_av}
+  \int_{}
+g(y)     \rhoT(y) \rmd y  = \constT^{-1} \int_{} \sum_{k\in\zset} a_{k}g(\transfo^k(x)) \indi{\rmi}(x,k) \rho({x})\rmd x \eqsp.
+\end{equation*}
+\end{theorem}
+Hence, the expectation $\int g(x) \rhoT(x)\rmd x$ can be evaluated unbiasedly by sampling $X\sim\rho$, computing the orbit of the flow and weighting the values of the function along the orbits to obtain 
+  $\constT^{-1}\sum_{k \in \zset}
+  a_{k}g(\transfo^k(X))\1_{\rmi}(X,k)$.
+  
+As pointed out earlier, the support of $\rhoT$ contains the support of $\rho$ if $a_0 \neq 0$. So by applying Theorem \ref{theo:inf_non_eq} to $g \leftarrow f \rho /\rhoT$, we obtain 
+\begin{align}
+\label{eq:key-relation}
+&\int \left(\dummy(x) \frac{\rho(x)}{\rhoT(x)}\right) \rhoT(x)  \rmd x =
+\int \dummy(x) \rho(x)  \rmd x\\
+&=\int \sum_{k\in \zset}  \parenthese{\dummy(\transfo^{k}(x)) w_k(x)} \rho(x)  \rmd x \eqsp,
+\end{align}
+where we have set (with the convention $0/0=0$), 
+\begin{equation}
+\label{eq:w_k_first_def}
+w_k(x) = a_{k}  \rho(\transfo^{k}(x))\indi{\rmi}(x,k) / [\constT\rhoT(\transfo^{k}(x))]  \eqsp.
+\end{equation}
+Note that $\constT\rhoT(\transfo^{k}(x))$ simplifies and the
+normalizing constant $\constT$ does not appear in the right-hand
+side of \eqref{eq:w_k_first_def}. The expression of the weights may
+still seem daunting but the following Lemma shows that it can be
+considerably simplified.
+\begin{lemma}
+\label{SPlemma:weights}
+Assume \Cref{assumption:z_ne_finite} and $a_0 \neq 0$.  Then, for any $x \in \rset^d$ and $k \in \zset$,
+\begin{equation}
+  \label{eq:def_w_k}
+    w_{k}(x) =  \left. a_{k} \rho_k(x) \middle / \left\{ \sum\nolimits_{j\in \zset} a_{k-j} \rho_{j}(x) \right\} \right. \eqsp.
+\end{equation}
+\end{lemma}
+By \Cref{SPlemma:weights},  for $k \in \zset$, the weights $w_{k}(x)$ are also upper bounded uniformly in $x$: for any $x \in \rset^d$ and $k \in \zset$,  $w_{k}(x) \leq a_{k}/a_0$. In addition,
+if $a_j = 0$ for any $j\in \zset$ such that $\abs{j} \geq K$, then for any $k \in \zset$ such that $\abs{k} \geq K$, we have $w_k \equiv 0$. 
+
+From \eqref{eq:key-relation} and \Cref{SPlemma:weights}, we define  in \Cref{algo:IFIS}  the IFIS estimator of $\int f(x) \rho(x) \rmd x$.
+\begin{algorithm}
+\begin{enumerate}[wide, labelwidth=!, labelindent=0pt, label=(\arabic*)]
+\item Sample $X^i \overset{\text{iid}}{\sim} \rho$ for $i\in[N]$.
+\item For $i \in \intentierU{N}$, compute backward and forward the
+  path $(\transfo^j(X^i)_{j \in\zset}$ and weights $(w_j(X^i))_{j \in\zset}$. 
+\item$I^{\IFIS}_N(f) =   \tfrac{1}{N} \sum_{i=1}^N \sum_{k\in\zset} w_k(X^i)  f(\transfo^k(X^i))$. 
+\end{enumerate}
+\caption{Invertible Flow Importance Sampling}
+\label{algo:IFIS}
+\end{algorithm}
+% Define
+% $I_N^{\MC}(f)$  the crude Monte Carlo estimator $I_N^{\MC}= N^{-1} \sum_{i=1}^N \likelihood(X^i) f(X^i)$, with $X^{1:N} \sim_{\mathrm{i.i.d}} \rho$.
+\begin{theorem}
+\label{theo:importance-sampling}
+Assume \Cref{assumption:z_ne_finite} and $a_0 \neq 0$. Then, $I^{\IFIS}_N(f)$ is an unbiased estimator of $\int f(x) \rho(x) \rmd x$. Moreover, if $a_k \equiv 1$, then $\PVar(I_N^{\IFIS}(f)) \leq \PVar(I_N^{\MC}(f))$, where $I_N^{\MC}(f)$ is the crude Monte Carlo estimator. 
+\end{theorem}
+%Note that although the variance of $I^{\IFIS}_N(f)$ may be smaller than
+%the variance of the crude Monte Carlo estimator $I_N^{\MC}(f)$, this comes at an increased computational cost.
+\arnaud{1-selection of $a_k$??  2-non-homogeneous flow?}
+Note that a straightforward extension would include non homogeneous flows. However, in practice, this resembles a simple mixture of normalizing flows, and we choose to focus here on homogeneous flows, which allow us in the end to present a more innovative algorithm.

@@ -1,0 +1,287 @@
+%\appendix{}
+
+% \begin{proposition}
+%   \label{propo:contraction_hamiltonian}
+%   Assume $U : \rset^d \to \rset$ is continuously differentiable and
+%   $L$-smooth, \ie~for any $q_1,q_2 \in \rset^d$,
+%   $\norm{\nabla U(q_1)-\nabla U(q_2)} \leq L\norm{q_1-q_2}$.
+%   \begin{enumerate}
+%   \item Then,  for
+%   any $h >0$, $\tilde{\psi}_h : \rset^{2d} \to \rset^{2d}$ defined by
+%   $\tilde{\psi}_h(p,q) = h^{-1}\{\psi_h(p,q)-(p,q)\}$ is
+%   $\tilde{L}_h$-Lipschitz with $\tilde{L}_h = $ and $\psi_h$ given by
+%   \eqref{eq:def_psi_h}.
+% \item  In addition, if $\tilde{L}_h <1$, then $\psi_h$ is a $\rmC^1$-diffeomorphism. 
+%   \end{enumerate}
+% \end{proposition}
+
+
+\section{Proofs of \Cref{sec:IFIS}}
+\label{sec:proof:infine}
+%We provide here detailed proofs of the results presented in Section \ref{sec:IFIS}. We also give an alternative interpretation of the normalizing constant estimator, relating it to nested sampling \citep{skilling2006nested,chopin:robert:2010}.
+
+\subsection{Proof of \Cref{eq:inf_non_eq_av_0}}
+
+  Let $f:\rset^d\to\rset_+$ be a measurable function and
+  $k \in \{0,\dots,K\}$.  Denote
+  $\measprop_{k}(f)= \int \dummy(\transfo^{k}(x)) \indi{\rmi}(x,k)\rho(x)\rmd x$.
+Using the change of variable $y = \transfo^{k}(x)$,
+%$\rmd x = |\JacOp{\transfo^{-k}}(y)| \rmd y$, 
+and since by definition of the set $\rmi$,
+$\indi{\mso}(\transfo^{-k}(y)) \indi{\rmi}(\transfo^{-k}(y),k) =
+\indi{\mso}(y) \indi{\rmi}(y,-k)$, we obtain
+\begin{align*}
+  \nmeasrho_{k}(f) &=
+                       \int \dummy(y) \rho(\transfo^{-k}(y)) \indi{\mso}(\transfo^{-k}(y)) \indi{\rmi}(\transfo^{-k}(y),k) |\JacOp{\transfo^{-k}}(y)|\rmd y\\
+                       &= \int\dummy(y) \rho(\transfo^{-k}(y)) \indi{\mso}(y) \indi{\rmi}(y,-k) |\JacOp{\transfo^{-k}}(y)|\rmd y\eqsp, 
+\end{align*}
+which concludes the proof.
+
+
+\subsection{Proof of \Cref{theo:inf_non_eq}}
+
+Let $f:\rset^d \to \rset$ be a  measurable  function.  
+Since $\rho_k$ is the pushforward measure of $x\mapsto\rho(x)\indi{\rmi}(x,k)$ by $\transfo^{k}$,
+\begin{align*}
+\int f(x) \proposal(x) \rmd x
+&= \int f(x) \frac{\proposal(x)}{\proposal_{\transfo}(x)} \proposal_{\transfo}(x) \rmd x \\
+&= \frac{1}{\constT} \sum_{k=0}^K \int f(x) \frac{\proposal(x)}{\proposal_{\transfo}(x)} \proposal_k(x) \rmd x = 
+\frac{1}{\constT} \sum_{k=0}^K \int f(\transfo^k(x)) \frac{\proposal(\transfo^k(x))}{\proposal_{\transfo}(\transfo^k(x))} \indi{\rmi}(x,k) \proposal(x) \rmd x \\
+&= \sum_{k=0}^K \int f(\transfo^k(x)) \w_k(x) \proposal(x) \rmd x \eqsp.
+\end{align*}
+
+\subsection{Proof of \Cref{SPlemma:weights}}
+We need to show that for any $x \in \mso$, $k\in \{0,\dots, K\}$
+\begin{align*}
+  \indi{\rmi}(x,k)\sum_{i=0}^K  \rho_i(\transfo^k(x))
+ & =  \frac{\indi{\rmi}(x,k)}{|\JacOp{\transfo^{k}}(x)|} \sum_{j=-k}^{K-k}  \rho_j(x)  \,.
+\end{align*}
+Using the identity $|\JacOp{\transfo^{i+k}}(x)|=|\JacOp{\transfo^{i}}(\transfo^k(x))| |\JacOp{\transfo^{k}}(x)|$, we obtain
+%%%If we were using a sequence a_i in the weights \rho_i, we would obtain at the end of this derivation a_{j-k} = a_j for any j \in \zset, thus forcing us to write sequence a_i = 1 for any i 
+\begin{align*}
+    \indi{\rmi}(x,k)\sum_{i=0}^K  \rho_i(\transfo^k(x)) &=   \sum_{i=0}^K  \indi{\rmi}(x,k)   \rho(\transfo^{i}(\transfo^k(x))) {\JacOp{\transfo^{i}}(\transfo^k(x))} \1_{\rmi}(\transfo^k(x)),i) \\
+ &= \frac{1}{\JacOp{\transfo^{k}}(x)}\sum_{i=0}^K  \indi{\rmi}(x,k) \rho(\transfo^{i+k}(x)) {\JacOp{\transfo^{i+k}}(x)} \1_{\rmi}(\transfo^k(x)),i) \\
+ &=  \frac{1}{\JacOp{\transfo^{k}}(x)}\sum_{j=-k}^{K-k}  \rho(\transfo^{j}(x)) {\JacOp{\transfo^{j}}(x)} \1_{\rmi}(\transfo^k(x),j-k)\indi{\rmi}(x,k)
+\end{align*}
+Note that is $(x,k) \in \rmi$, we have $(x,j)\in \rmi$ if and only if
+$(\transfo^k(x),j-k) \in \rmi$ by definition of $\rmi$ \eqref{eq:def_rmi}.
+Then, we obtain 
+\begin{equation*}
+    \1_{\rmi}(\transfo^k(x)),j-k)\indi{\rmi}(x,k) % &= \prod_{l=0}^{j-k} \indi{\Omega}(\phi^{l+k}(x)) \prod_{l=j-k}^{0} \indi{\Omega}(\phi^{l+k}(x))
+    % \prod_{l=0}^k \indi{\Omega}(\phi^l(x)) \prod_{l=k}^{0} \indi{\Omega}(\phi^l(x)) \\
+    % &= \prod_{l=k}^{j} \indi{\Omega}(\phi^{l}(x)) \prod_{l=j}^{k} \indi{\Omega}(\phi^{l}(x))
+    % \prod_{l=0}^k \indi{\Omega}(\phi^l(x)) \prod_{l=k}^{0} \indi{\Omega}(\phi^l(x))\\
+    % &= \prod_{l=0}^{j} \indi{\Omega}(\phi^{l}(x)) \prod_{l=j}^{0} \indi{\Omega}(\phi^{l}(x))
+    % \prod_{l=0}^k \indi{\Omega}(\phi^l(x)) \prod_{l=k}^{0} \indi{\Omega}(\phi^l(x))\\
+=\indi{\rmi}(x,j)\indi{\rmi}(x,k) 
+\end{equation*}
+This concludes the proof.
+
+%\subsection{Proof of \Cref{theo:importance-sampling}}
+%Assume that $a_k \equiv 1$ for any $k \in\zset$ and
+%\Cref{assumption:z_ne_finite} holds. By \eqref{eq:def_w_k},
+%almost everywhere $\sum_{k\in\zset} w_k =1$. As a result using Jensen
+%inequality and \Cref{SPlemma:weights}, we obtain
+%for $f : \rset^n \to \rset$, setting
+%$\bar{f} = f-\int f(x) \rho(x)\rmd x$,
+%\begin{equation}
+%  \label{eq:2}
+%N  \PVar(I_N) =  \int \parenthese{ \sum_{k\in\zset} w_k(x) \bar{f}(x)}^2 \rho(x) \rmd x \leq
+% \int  \bar{f}^2(x) \rho(x) \rmd x \eqsp.
+%\end{equation}
+
+
+
+
+
+%\subsection{Gradients for optimization of the NeqVAE}
+%In this case, we can write the weights \begin{equation}
+%\label{eq:weights_vae_different}
+%    w_{\phi,k}(z)=  \left. a_{k}  q_\phi(\transfo^k_{\phi}(z)\mid x) \middle / \left\{ \sum\nolimits_{j\in \zset} a_{j} q_\phi(\transfo^{-j}_{\phi}\circ\transfo^k_{\phi}(z)\mid x) \JacOp{\transfo^{-j}_{\phi}}(\transfo^k_{\phi}(z)) \right\} \right.
+%\end{equation}
+%We can optimize this quantity...
+%Still todo : express nice gradients IWAE style
+%***Not pretty, work in progress***
+%Note $\varpi_{\theta,\phi,k}(z) = w_{\phi,k}(z)p_\theta(x,\transfo^k_{\phi}(z))/q_\phi(\transfo^k_{\phi}(z)\mid x)$. Then, we can easily write
+%\begin{equation}
+%\elboneq(\theta,\phi;x)= \int \log\left(\sum\nolimits_{k\in\zset}\varpi_{\theta,\phi,k}(z)\right) q_\phi(z\mid x)\rmd z
+%\end{equation}
+%In particular, following \cite{burda:grosse:2015}, we write
+%\begin{align}
+%\nabla_\theta\elboneq &= \int \nabla_\theta \log\left(\sum\nolimits_{k\in\zset}\varpi_{\theta,\phi,k}(z)\right) q_\phi(z\mid x)\rmd z\\
+%&=  \int \sum\nolimits_{k\in\zset} \frac{\nabla_\theta \varpi_{\theta,\phi,k}(z)}{\sum\nolimits_{j\in\zset}\varpi_{\theta,\phi,j}(z)} q_\phi(z\mid x)\rmd z\\
+%&= \int \sum\nolimits_{k\in\zset}\tilde{\varpi}_{\theta,\phi,k}(z) \nabla_\theta\log \varpi_{\theta,\phi,k}(z)  q_\phi(z\mid x)\rmd z\eqsp,
+%\end{align}
+%where $\tilde{\varpi}_{\theta,\phi,k}(z) = \varpi_{\theta,\phi,k}(z)/\sum\nolimits_{j\in\zset}\varpi_{\theta,\phi,j}(z)$.
+%Moreover, note that we can easily write $\nabla_\theta\log \varpi_{\theta,\phi,k}(z) = \nabla_\theta\log p_\theta(x,\transfo^k_{\phi}(z))$.
+%Now we want to express gradient \wrt~$\phi$. First, assume that we can apply the reparameterization trick, crucial in those optimization problems. Suppose we have access to some constant density $\densgauss$ and some diffeomorphism $V_{\phi,x}$ (typically affine), such that  if $\epsilon\sim \densgauss$, then $z=V_{\phi,x}(\epsilon) \sim q_\phi(z\mid x)$. 
+%
+%Then, notice that we can also write \[\varpi_{\theta,\phi,k}(z) = \left. a_{k}   p_\theta(x,\transfo^k_{\phi}(z))\middle / \left\{ \sum\nolimits_{j\in \zset} a_{-j} q_\phi(\transfo^j_{\phi}\circ\transfo^k_{\phi}(z)\mid x) \JacOp{\transfo^j_{\phi}}(\transfo^k_{\phi}(z)) \right\}\right.\eqsp.\] 
+%By a similar computation, we can write
+%\begin{equation}
+%\nabla_\phi\elboneq =\int \sum\nolimits_{k\in\zset}\tilde{\varpi}_{\theta,\phi,k}(V_{\phi,x}(\epsilon)) \nabla_\phi\log \varpi_{\theta,\phi,k}(V_{\phi,x}(\epsilon))  \densgauss(\epsilon)\rmd \epsilon\eqsp, 
+%\end{equation}
+%and we can now write
+%\begin{align}
+%\nabla_\phi\log \varpi_{\theta,\phi,k}(V_{\phi,x}(\epsilon))  &= \nabla_\phi \log p_\theta(x,\transfo^k_{\phi}(V_{\phi,x}(\epsilon))) \\
+% &- \nabla_\phi \log \left(\sum\nolimits_{j\in \zset} a_{-j} q_\phi(\transfo^j_{\phi}\circ\transfo^k_{\phi}(V_{\phi,x}(\epsilon))\mid x) \JacOp{\transfo^j_{\phi}}(\transfo^k_{\phi}(V_{\phi,x}(\epsilon))) \right)\eqsp.
+%\end{align}
+%If we apply now a similar trick, noting $\varrho_{\phi,j,k}(z) = a_{-j} q_\phi(\transfo^j_{\phi}\circ\transfo^k_{\phi}(z)\mid x) \JacOp{\transfo^j_{\phi}}(\transfo^k_{\phi}(z))$, we have 
+%$\nabla_\phi \log \left(\sum\nolimits_{j\in \zset}  a_{-j} q_\phi(\transfo^j_{\phi}\circ\transfo^k_{\phi}(V_{\phi,x}(\epsilon))\mid x) \JacOp{\transfo^j_{\phi}}(\transfo^k_{\phi}(V_{\phi,x}(\epsilon)))\right) = \sum\nolimits_{j\in \zset} \tilde{\varrho}_{\phi,j,k}(V_{\phi,x}(\epsilon)) \nabla_\phi \log  \varrho_{\phi,j,k}(V_{\phi,x}(\epsilon))$, where again $\tilde{\varrho}_{\phi,j,k} = \varrho_{\phi,j,k}/\sum_{j\in\zset}\varrho_{\phi,j,k}$.
+%Thus, finally, 
+%\begin{align}
+%\nabla_\phi\elboneq = \int \sum\nolimits_{k\in\zset}\tilde{\varpi}_{\theta,\phi,k}(V_{\phi,x}(\epsilon))&\left[\nabla_\phi \log p_\theta(x,\transfo^k_{\phi}(V_{\phi,x}(\epsilon)))\right.\\
+%&\left.- \sum\nolimits_{j\in \zset} \tilde{\varrho}_{\phi,j,k}(V_{\phi,x}(\epsilon)) \nabla_\phi \log  \varrho_{\phi,j,k}(V_{\phi,x}(\epsilon))\right] \densgauss(\epsilon)\rmd \epsilon\eqsp.
+%\end{align}
+%The double sum is expensive and might require more work, however it is worthwhile noting that no feedforward is needing in computing this second sum, as is it just a sum of affine terms in the latent space. Moreover, we could imagine estimating the different sums \emph{(especially if we observe that one term of the sum is way more important than the other !)} by sampling either $K\sim \Cat(\tilde{\varpi}_{\theta,\phi,k})$, or $J\sim \Cat(\tilde{\varrho}_{\phi,j,k})$, or even both. 
+
+
+% \subsection{General framework for pseudo-marginal methods}
+% Consider $\bmeaspi$ an extended target distribution with
+% marginal $\pi$ on $(\rset^d \times \msv, \mcb{\rset^d} \otimes \mcv)$.  Based on this extension, we can use a
+% pseudo-marginal strategy to sample from $\pi$.    Consider a family of Markov
+% kernels $\{Q^N \, : \, N \in \nsets\}$ on $ \rset^d \times \mcv^{\otimes N} $
+% which defines a family of proposal distribution on $\msv^N$,
+% $\{Q_{y}^N \, : \, y \in \rset^d\}$ for any $N \in\nsets$. For any
+% $v^N = (v_1^N,\ldots,v_N^N) \in \msv^N$, and $i \in \{1,\ldots,N\}$, denote by
+% $v^N_{-i} = (v_1^N,\ldots,v_{i-1}^N, v_{i+1}^N, \ldots, v_N^N)$. Consider a Markov
+% kernel $\bar{Q}$ on $\rset^d \times \mcb{\rset^d}$.
+% We make the following assumption on $\{Q_{y}^N \, : \, y \in \rset^d\}$ and $\bar{Q}$.
+% \begin{assumption}
+%   \label{ass:abs_cont_pseudo_marginal}
+%   For any $y \in \rset^d$, $i \in \{1,\ldots,N\}$ and $v^N \in \msv^N$,
+%   $\bmeaspi(\cdot |y)$  is absolutely continuous
+%   \wrt~$Q_{y}^N(\cdot |v^N_{-i})$ and $\bar{Q}(y,\cdot)$ is equivalent to $\pi$.
+% \end{assumption}
+% Under \Cref{ass:abs_cont_pseudo_marginal}, define
+% % \begin{align}
+% %   \nonumber
+% %   \bmeaspi^N(\rmd y\, \rmd v^N) &= \frac{1}{N} \sum_{i=1}^N   \bmeaspi(\rmd y \, \rmd v^N_i ) Q_{y}^N(\rmd v^N_{-i}) =
+% %   \frac{1}{N}  \sum_{i=1}^N  \measpi(\rmd y )
+% %                                  \frac{ \rmd  \bmeaspi( \cdot |y)}{\rmd Q_{y}^N(\cdot |v^N_{-i})} (v_i)  Q_{y}^N(\rmd v^N) \\
+% %   \label{eq:def_bpi_N}
+% % & = \measpi(\rmd y ) Q_{y}^N(\rmd v^N) \xi(y,v^N)    \eqsp,
+% % \end{align}
+% where
+% \begin{equation*}
+%   \xi^N(y,v^N) = \frac{1}{N}\sum_{i=1}^N 
+%   \frac{ \rmd  \bmeaspi( \cdot |y)}{\rmd Q_{y}^N(\cdot |v^N_{-i})} (v_i)  \eqsp. 
+% \end{equation*}
+% Note that for any $N \in \nsets$,
+% $ \bmeaspi^N(\rmd y) = \measpi(\rmd y)$ by \eqref{eq:marginal_bpi}.
+% The pseudo-marginal Metropolis Hastings (MH) or grouped independence MH algorithm \cite{andrieu:roberts:2009,beaumont:2003}
+% consists applying a Metropolis-Hastings kind method to sample from
+% $ \bmeaspi^N$ for $N \in \nsets$ fixed as follows. Define the proposal
+% kernel $\tilde{Q}^N$ on $(\rset^d \times \msv^n) \times(\mcb{\rset^d} \otimes \mcv^{\otimes N})$ for $(y,v^N) \in \rset^d \times \msv$  by
+% \begin{equation}
+%   \label{eq:def_proposotion_tilde_Q__marginal}
+%   \tilde{Q}^N((y,v^N), \rmd \bar{y}  \rmd \bar{v}^N) =  \bar{Q}(y,\rmd \bar{y}) Q_{\bar{y}}^N (\rmd \bar{v}^N) \eqsp. 
+% \end{equation}
+% Using this proposal, we can apply a Metropolis-Hastings algorithm to sample from $\bmeaspi^N$ given in \ref{eq:def_bpi_N}.
+% The Markov kernel associated with this method is then given for $(y,v^N) \in \rset^d \times \msv$  by
+% \begin{multline}
+%   \label{eq:def_P_marginal}
+%   P^N((y,v^N), \rmd \bar{y}\, \rmd \bar{v}^N) = \alpha^N((y,v^N),(\bar{y},\bar{v}^N))  \tilde{Q}^N((y,v^N), \rmd \bar{y} \, \rmd \bar{v}^N) \\
+%  + \updelta_{y,v^N}(\rmd \bar{y} \,\rmd \bar{v}^N) \int_{\rset^d \times
+%     \msv} \{1-\alpha^N((y,v^N),(\tilde{y},\tilde{v}^N))\} \tilde{Q}^N((y,v^N),
+%   \rmd \tilde{y} \, \rmd \tilde{v}^N)\eqsp,
+% \end{multline}
+% where using \eqref{eq:def_bpi_N} and \eqref{eq:def_proposotion_tilde_Q__marginal},
+% \begin{multline}
+%   \alpha^N((y,v^N),(\bar{y},\bar{v}^N))= 1 \wedge \parentheseDeux{\frac{\bmeaspi^N(\rmd \bar{y} \, \rmd \bar{v}^N)
+%       \tilde{Q}^N((\bar{y} , \bar{v}^N), \rmd y \, \rmd v^N)}{\bmeaspi^N(\rmd {y} \, \rmd {v}^N)
+%       \tilde{Q}^N(({y} , {v}^N), \rmd \bar{y} \, \rmd \bar{v}^N)}} \\
+%   = 1 \wedge \parentheseDeux{\frac{\pi(\rmd \bar{y}) \bar{Q}(\bar{y},\rmd y) \xi^N(\bar{y},\bar{v}^N)}{\pi(\rmd {y}) \bar{Q}({y},\rmd \bar{y}) \xi^N({y},{v}^N)}} \eqsp. 
+% \end{multline}
+
+
+% \subsection{Pseudo-marginal Algorithm: General setting}
+% In this section, we present two pseudo-marginal methods to sample from
+% $\pi$ using MCMC algorithm targeting an extended distribution
+% $\bar{\pi}^N$, for $N \in \nsets$, designed using the kernel $K$ introduced in \Cref{sec:estimator}. These two methods can be casted in
+% a general framework given in ... which ensures that the Markov chains
+% associated with both target the distribution of interest $\pi$.
+
+% \alain{Present extended target and associated proposals for $N$ and their simulation} 
+
+% Consider $\msv = \rset^d \times \zset$ with $\sigma$-field
+% $\mcv = \mcb{\rset^d} \otimes 2^{\zset}$, and denote by
+% $\bfm = \rhobf \otimes \{\sum_{k\in \zset} \updelta_{k}\}$ the measure
+% on $(\msv,\mcv)$. Under \Cref{assumption:z_ne_finite}, define the
+% measure $\bmeaspi$ on
+% $( \rset^d\times \msv, \mcb{\rset^d}\otimes \mcv )$, setting
+% $v=(x,k)$, by
+% \begin{equation}
+%   \label{eq:def_bmeaspi}
+%   \bmeaspi( \rmd y \, \rmd v) = \const_{\likelihood}^{-1} \bfm(\rmd v) \w_k(x) \likelihood(y) \updelta_{\phi^k(x)} (\rmd y) \eqsp,
+% \end{equation}
+% where $\const_{\likelihood}$ is defined by \eqref{eq:normal_const}. 
+% Note that by \Cref{corollary:inv_kernel} and \eqref{eq:kernel}, we obtain that
+% \begin{equation}
+%   \label{eq:marginal_bpiD}
+%   \bmeaspi(\rmd y) = \const_{\likelihood}^{-1} \int_{\rset^d }
+%   \sum_{k\in \zset} \w_k(x) \likelihood(y) \updelta_{\phi^k(x)} (\rmd y) = \const_{\likelihood}^{-1} \int_{\rset^d } \measrho(\rmd x) K(x, \rmd y) \likelihood(y)   =  \measpi(\rmd y ) \eqsp.
+% \end{equation}
+
+
+% Consider $\bmeaspi$ an extended target distribution with
+% marginal $\pi$ on $(\rset^d \times \msv, \mcb{\rset^d} \otimes \mcv)$.  Based on this extension, we can use a
+% pseudo-marginal strategy to sample from $\pi$.    Consider a family of Markov
+% kernels $\{Q^N \, : \, N \in \nsets\}$ on $ \rset^d \times \mcv^{\otimes N} $
+% which defines a family of proposal distribution on $\msv^N$,
+% $\{Q_{y}^N \, : \, y \in \rset^d\}$ for any $N \in\nsets$. For any
+% $v^N = (v_1^N,\ldots,v_N^N) \in \msv^N$, and $i \in \{1,\ldots,N\}$, denote by
+% $v^N_{-i} = (v_1^N,\ldots,v_{i-1}^N, v_{i+1}^N, \ldots, v_N^N)$. Consider a Markov
+% kernel $\bar{Q}$ on $\rset^d \times \mcb{\rset^d}$.
+% We make the following assumption on $\{Q_{y}^N \, : \, y \in \rset^d\}$ and $\bar{Q}$.
+% \begin{assumption}
+%   \label{ass:abs_cont_pseudo_marginal}
+%   For any $y \in \rset^d$, $i \in \{1,\ldots,N\}$ and $v^N \in \msv^N$,
+%   $\bmeaspi(\cdot |y)$  is absolutely continuous
+%   \wrt~$Q_{y}^N(\cdot |v^N_{-i})$ and $\bar{Q}(y,\cdot)$ is equivalent to $\pi$.
+% \end{assumption}
+% Under \Cref{ass:abs_cont_pseudo_marginal}, define
+% \begin{align}
+%   \nonumber
+%   \bmeaspi^N(\rmd y\, \rmd v^N) &= \frac{1}{N} \sum_{i=1}^N   \bmeaspi(\rmd y \, \rmd v^N_i ) Q_{y}^N(\rmd v^N_{-i}) =
+%   \frac{1}{N}  \sum_{i=1}^N  \measpi(\rmd y )
+%                                  \frac{ \rmd  \bmeaspi( \cdot |y)}{\rmd Q_{y}^N(\cdot |v^N_{-i})} (v_i)  Q_{y}^N(\rmd v^N) \\
+%   \label{eq:def_bpi_N}
+% & = \measpi(\rmd y ) Q_{y}^N(\rmd v^N) \xi(y,v^N)    \eqsp,
+% \end{align}
+% where
+% \begin{equation*}
+%   \xi^N(y,v^N) = \frac{1}{N}\sum_{i=1}^N 
+%   \frac{ \rmd  \bmeaspi( \cdot |y)}{\rmd Q_{y}^N(\cdot |v^N_{-i})} (v_i)  \eqsp. 
+% \end{equation*}
+% Note that for any $N \in \nsets$,
+% $ \bmeaspi^N(\rmd y) = \measpi(\rmd y)$ by \eqref{eq:marginal_bpi}.
+% The pseudo-marginal Metropolis Hastings (MH) or grouped independence MH algorithm \cite{andrieu:roberts:2009,beaumont:2003}
+% consists applying a Metropolis-Hastings kind method to sample from
+% $ \bmeaspi^N$ for $N \in \nsets$ fixed as follows. Define the proposal
+% kernel $\tilde{Q}^N$ on $(\rset^d \times \msv^n) \times(\mcb{\rset^d} \otimes \mcv^{\otimes N})$ for $(y,v^N) \in \rset^d \times \msv$  by
+% \begin{equation}
+%   \label{eq:def_proposotion_tilde_Q__marginal}
+%   \tilde{Q}^N((y,v^N), \rmd \bar{y}  \rmd \bar{v}^N) =  \bar{Q}(y,\rmd \bar{y}) Q_{\bar{y}}^N (\rmd \bar{v}^N) \eqsp. 
+% \end{equation}
+% Using this proposal, we can apply a Metropolis-Hastings algorithm to sample from $\bmeaspi^N$ given in \ref{eq:def_bpi_N}.
+% The Markov kernel associated with this method is then given for $(y,v^N) \in \rset^d \times \msv$  by
+% \begin{multline}
+%   \label{eq:def_P_marginal}
+%   P^N((y,v^N), \rmd \bar{y}\, \rmd \bar{v}^N) = \alpha^N((y,v^N),(\bar{y},\bar{v}^N))  \tilde{Q}^N((y,v^N), \rmd \bar{y} \, \rmd \bar{v}^N) \\
+%  + \updelta_{y,v^N}(\rmd \bar{y} \,\rmd \bar{v}^N) \int_{\rset^d \times
+%     \msv} \{1-\alpha^N((y,v^N),(\tilde{y},\tilde{v}^N))\} \tilde{Q}^N((y,v^N),
+%   \rmd \tilde{y} \, \rmd \tilde{v}^N)\eqsp,
+% \end{multline}
+% where using \eqref{eq:def_bpi_N} and \eqref{eq:def_proposotion_tilde_Q__marginal},
+% \begin{multline}
+%   \alpha^N((y,v^N),(\bar{y},\bar{v}^N))= 1 \wedge \parentheseDeux{\frac{\bmeaspi^N(\rmd \bar{y} \, \rmd \bar{v}^N)
+%       \tilde{Q}^N((\bar{y} , \bar{v}^N), \rmd y \, \rmd v^N)}{\bmeaspi^N(\rmd {y} \, \rmd {v}^N)
+%       \tilde{Q}^N(({y} , {v}^N), \rmd \bar{y} \, \rmd \bar{v}^N)}} \\
+%   = 1 \wedge \parentheseDeux{\frac{\pi(\rmd \bar{y}) \bar{Q}(\bar{y},\rmd y) \xi^N(\bar{y},\bar{v}^N)}{\pi(\rmd {y}) \bar{Q}({y},\rmd \bar{y}) \xi^N({y},{v}^N)}} \eqsp. 
+% \end{multline}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

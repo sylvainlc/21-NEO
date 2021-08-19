@@ -1,0 +1,130 @@
+
+We now consider a family of transformations $(\transfo_k)_{k\in \nsets}$. Write, for $k>0$, $\mathbb{T}_k = \transfo_k\circ\dots\circ \transfo_1$, for $k<0$, $\mathbb{T}_k = \transfo_{-1}\circ\dots\circ \transfo_{-k}$, where we introduced for $i<0$, $\transfo_{-i}= \transfo_i^{-1}$ and finally $\mathbb{T}_0= \Id$
+
+We want to write IFIS estimator with these non homogeneous flows.
+ Define now
+$\tau^{+} : \rset^d \to \nset$, $\tau^{-} : \rset^d \to \nset_-$, for
+$x \in \rset^d$ by
+\begin{equation}
+\label{eq:definition-tau-+--}
+\tau^{+}(x)=\inf\{k\geq 1\, :  \,  \mathbb{T}_k(x) \not \in \mso\} \eqsp, \quad \tau^{-}(x)=\sup\{k\leq -1\, :  \,  \mathbb{T}_k(x) \not \in \mso\} \eqsp,
+\end{equation}
+with the convention $\inf \emptyset = +\infty$ and
+$\sup \emptyset = - \infty$, and define
+\begin{equation}
+  \label{eq:def_rmi}
+  \rmi = \{(x,k) \in \mso\times \zset\,:\, k \in
+\intentier{\tau^-(x)+1}{\tau^+(x)-1}\} \eqsp.
+\end{equation}
+If $\mso = \rset^{d}$, then $\tau^{+}(x) = \plusinfty$, $\tau^{-}(x) = -\infty$ for any $x \in \rset^d$ and
+$\rmi = \rset^{d} \times \zset$. For any $k \in \zset$, define $\rho_k : \rset^d \to \rset_+$ by
+\begin{equation}
+\label{eq:definition-rho-k}
+    \rho_k(x)= \rho(\mathbb{T}_k(x))  \absLigne{\JacOp{\mathbb{T}_k}(x)} \1_{\rmi}(x,k)\eqsp.
+\end{equation}
+We want to derive the same equalities, replacing now $\transfo^k$ by $\mathbb{T}_k$.
+
+
+We write 
+\begin{lemma}
+\label{theo:inf_non_eq_0}
+For any $k \in \zset$ and  measurable nonnegative function $f:\rset^d \to \rset_+$, we have
+\begin{equation}
+    \label{eq:inf_non_eq_av_0}
+    \int \dummy(y)    \rho_k(y)\rmd y =
+  \int \dummy(\mathbb{T}_{-k}(x)) \indi{\rmi}(x,-k)\rho(x)\rmd x  \eqsp.
+\end{equation}
+\end{lemma}
+
+
+Let $f:\rset^n\to\rset_+$ be a positive measurable function and
+  $k \in \zset$.  Denote
+  $\nmeasrho_{k}(f)= \int \dummy(\mathbb{T}_{-k}(x)) \indi{\rmi}(x,-k)\rho(x)\rmd x$.
+Using the change of variable, $y = \mathbb{T}_{-k}(x)$,
+$\rmd x = |\JacOp{\mathbb{T}_k}(y)| \rmd y$, and since by definition of the set $\rmi$,
+$\indi{\mso}(\mathbb{T}_k(y)) \indi{\rmi}(\mathbb{T}_k(y),-k) =
+\indi{\mso}(y) \indi{\rmi}(y,k)$, we obtain
+\begin{align*}
+  \nmeasrho_{k}(f) &=
+                       \int \dummy(y) \rho(\mathbb{T}_k(y)) \indi{\mso}(\mathbb{T}_k(y)) \indi{\rmi}(\mathbb{T}_k(y),-k) |\JacOp{\mathbb{T}_k}(y)|\rmd y\\
+                       &= \int\dummy(y) \rho(\mathbb{T}_k(y)) \indi{\mso}(y) \indi{\rmi}(y,k) |\JacOp{\mathbb{T}_k}(y)|\rmd y\eqsp, 
+\end{align*}
+which concludes the proof.
+
+In practice here, we consider a family $(a_k)_{k\in \zset} $ with finite support.
+
+\begin{assumption}
+  \label{assumption:z_ne_finite}
+  The nonnegative sequence $(a_k)_{k\in\zset}$ satisfies
+\begin{equation}
+\label{eq:def_z_ne}
+    \constT = \int\sum_{k\in \zset}  a_k \rho_k(x) \rmd x = \int\sum_{k\in \zset}  a_k \rho(\mathbb{T}_k(x))  \absLigne{\JacOp{\mathbb{T}_k}(x)} \1_{\rmi}(x,k) \rmd x< \infty\eqsp,
+  \end{equation}
+    where $\rho_k$ is defined by \eqref{eq:definition-rho-k}.
+  \end{assumption}
+  Thus, 
+\Cref{assumption:z_ne_finite} holds without restriction on $\transfo$
+  and $\mso$. 
+
+
+   Under
+  \Cref{assumption:z_ne_finite}, based on the flow $\transfo$, we can define the probability measure
+  $\rhoT(\rmd x)$ with density \wrt~the Lebesgue measure given for
+  any $x \in \rset^d$, by
+\begin{equation*}
+    \rhoT(x) =  \frac{1}{\constT}\sum_{k \in \zset} a_k \rho_k(x)= \frac{1}{\constT} \sum_{k \in \zset} a_k \rho(\mathbb{T}_k(x))  \absLigne{\JacOp{\mathbb{T}_k}(x)} \1_{\rmi}(x,k)\eqsp.
+  \end{equation*}
+  
+  We derive from \cref{theo:inf_non_eq_0} the following theorem.
+  \begin{theorem}
+ \label{theo:inf_non_eq}
+ Assume \Cref{assumption:z_ne_finite}.  For any measurable nonnegative function $g:\rset^d \to \rset_+$, we have
+\begin{equation}
+\label{eq:inf_non_eq_av}
+  \int
+g(y)     \rhoT(y) \rmd y  = \constT^{-1} \int \left(\sum\nolimits_{k\in\zset} a_{-k}g(\mathbb{T}_k(x)) \indi{\rmi}(x,k)  \right)\rho({x})\rmd x \eqsp.
+\end{equation}
+\end{theorem}
+ 
+ \begin{proof}
+ 
+Let $f:\rset^n \to \rset_+$ be a  measurable nonnegative function.  
+Note that we only need to show that 
+\begin{equation}
+    \int \left(\sum_{k\in\zset} a_{-k}\dummy(\mathbb{T}_k(x)) \indi{\rmi}(x,k)  \right)\rho({x})\rmd x =\int
+\dummy(y)     \parenthese{\sum_{k\in \zset} a_k  \rho_k(y)}\rmd y \eqsp.
+\end{equation}
+\Cref{theo:inf_non_eq_0} implies that  for any $T \in \nsets$, 
+\begin{equation}
+    \label{eq:lemma_T_non_eq}
+   \int \left(\sum_{k=-T}^T a_{-k}\dummy(\mathbb{T}_k(x)) \indi{\rmi}(x,k)  \right)\rho({x})\rmd x =\int
+\dummy(y)     \parenthese{\sum_{k=-T}^T a_k  \rho_k(y)}\rmd y \eqsp.
+\end{equation}
+The proof is then
+completed using the monotone convergence theorem.
+
+\end{proof}
+ 
+ 
+ 
+  
+ 
+As pointed out earlier, the support of $\rhoT$ contains the support of $\rho$ if $a_0 \neq 0$. So by applying Theorem \ref{theo:inf_non_eq} to $g \leftarrow f \rho /\rhoT$, we obtain 
+\begin{equation}
+\label{eq:key-relation}
+\int \left(\dummy(x) \frac{\rho(x)}{\rhoT(x)}\right) \rhoT(x)  \rmd x =
+\int \dummy(x) \rho(x)  \rmd x
+=\int \sum_{k\in \zset}  \parenthese{\dummy(\mathbb{T}_{k}(x)) w_k(x)} \rho(x)  \rmd x \eqsp,
+\end{equation}
+where we have set (with the convention $0/0=0$), 
+\begin{equation}
+\label{eq:w_k_first_def}
+w_k(x) = a_{-k}  \rho(\mathbb{T}_{k}(x))\indi{\rmi}(x,k) / [\constT\rhoT(\mathbb{T}_{k}(x))]  \eqsp.
+\end{equation}
+Note that $\constT\rhoT(\mathbb{T}_{k}(x))$ simplifies and the
+normalizing constant $\constT$ does not appear in the right-hand
+side of \eqref{eq:w_k_first_def}. The expression of the weights is complicated as there is no trivial simplification to perform.
+
+However, keeping the support of the $(a_k)_{k\in\zset}$ small might keep the computation feasible. 
+
+Note $K\in\nsets; |k|>K \Rightarrow a_k = 0$, we have a complexity of $O(K^2)$ to compute all weights.

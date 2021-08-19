@@ -1,0 +1,234 @@
+\subsection{Sampling from dissipative Hamiltonian}
+%We now aim at sampling from $\pi(\cdot) = \likelihood(\cdot) \rho(\cdot)/\const$, where $\const$ is intractable.
+\subsubsection{MCMC schemes}
+%We assume in the sequel that \Cref{assumption:z_ne_finite} is satisfied. 
+In this section, we describe novel MCMC algorithms to sample from $\pi$ that leverage the $\IFIS$ estimator   $\estConstC{X^{1:N}}$ given in \eqref{eq:def_estimator_normal_const}.
+The first algorithm we propose, the Invertible Flow Metropolis--Hastings (IFMH) is an independent MH algorithm that defines a Markov chain $(X^{1:N}_n,Y_n)_{n \geq 0}$ by the recursion given in \Cref{algo:IMH}. At each iteration, we
+compute an empirical distribution $\hat{\pi}_{\tilde{X}^{1:N}}$
+\[
+\hat{\pi}_{\tilde{X}^{1:N}} \propto \sum_{i=1}^{N}
+  \sum_{k=0}^K\likelihood(\transfo^{k}(X^i))w_k(X^i) \updelta_{\transfo^{k}(X^i))}
+\] associated with 
+$\tilde{X}^{i}\overset{\text{iid}}{\sim}\rho$ independently from the past, and
+then sample a proposal $Y\sim \hat{\pi}_{\tilde{X}^{1:N}}$. The marginal
+distribution of $Y$ is thus given by the expectation of
+$\hat{\pi}_{X^{1:N}}$ w.r.t. $X^{1:N}$ and is intractable. However, an auxiliary variable trick allows us to bypass this issue and compute an acceptance probability that guarantees $\pi$ as the invariant distribution of the algorithm.
+\begin{algorithm}
+At step
+$n \in \nset$, given $(X^{1:N}_n,Y_n)$.
+\begin{enumerate}[wide, labelwidth=!, labelindent=0pt, label=(\arabic*)]
+\item Sample $\tilde{X}_i\overset{\text{iid}}{\sim} \rho$ for $i\in[N]$ and compute the IFIS estimators $\hat{\pi}_{\tilde{X}^{1:N}}$ and $\estConstC{\tilde{X}^{1:N}}$.
+\item Sample $\tilde{Y}\sim \hat{\pi}_{\tilde{X}_{1:N}}$.
+\item
+With probability
+$$\min\left\{1,\estConstC{\tilde{X}^{1:N}}/\estConstC{X^{1:N}_{n}}\right\},$$
+set $(X^{1:N}_{n+1},Y_{n+1})=(\tilde{X}^{1:N},\tilde{Y})$. Otherwise set  $(X^{1:N}_{n+1},Y_{n+1})=(X^{1:N}_{n},Y_{n})$.
+\end{enumerate}
+\caption{Invertible Flow Metropolis-Hastings Sampler}
+\label{algo:IMH}
+\end{algorithm}
+
+
+We now propose the Invertible Flow Gibbs (IFG) sampler which is a partially collapsed Gibbs algorithm \citep{liu:1993,vandyk:park:2008} that is applicable as soon as $N\geq 2$. It defines a Markov chain $(X^{1:N}_n,I_n,K_n,Y_n)_{n \in\nset}$  \xian{$I_n$ surgit de nulle part...}by the recursion described in \Cref{algo:gibbs_partial}. 
+\begin{algorithm}
+At step
+$n \in \nset$, given $(X^{1:N}_n,I_n,K_n,Y_n)$.
+\begin{enumerate}[wide, labelwidth=!, labelindent=0pt, label=(\arabic*)]
+\item \label{algo:gibbs_partial_1} Set $X^{I_n}_{n+1} = X^{I_n}_{n}$ and for any
+  $i \in [N]\setminus \{I_n\}$, sample $X^{i}_{n+1}\overset{\text{iid}}{\sim} \rho$.
+\item Sample the path index $I_{n+1}$  with probability proportional to
+$(\estConstC{X_{n+1}^{i}})_{i \in [N]}$.
+\item Sample a location $K_{n+1}$ on the path  $I_{n+1}$ with probability proportional to $$\{w_k(X^{I_{n+1}}_{n+1})
+L(\transfo^k(X^{I_{n+1}}_{n+1}))/ \estConstC{X_{n+1}^{I_{n+1}}}\}_{k\in\zset}\eqsp,$$ and set $Y_{n+1} =\transfo^{K_{n+1}}(X^{I_{n+1}}_{n+1})$. 
+\end{enumerate}
+\caption{Invertible Flow Gibbs Sampler}
+\label{algo:gibbs_partial}
+\end{algorithm}
+\\IFG can be extended by replacing independent proposal in \ref{algo:gibbs_partial_1} with reversible Markov proposals w.r.t. $\rho$; see \Cref{sec:supp:proof_mcmc}. 
+
+
+These algorithms are akin to the particle independent MH and the particle Gibbs samplers proposed in \cite{andrieu2010particle} but their proof of validity rely on a different construction.
+
+\subsubsection{Validity}
+We only sketch here how one can establish  the validity of these MCMC schemes described above; details can be found in \Cref{sec:supp:proof_mcmc}. The proof consists of showing that IFMH, respectively IFG, is a ``standard'' independent Metropolis-Hastings (MH), respectively partially collapsed Gibbs sampler, acting on an extended target distribution $\bpi$ which admits $\pi$ as one of its marginal. Hence sampling from $\bpi$ also provides samples from $\pi$.
+
+This extended target $\bar{\measpi}$ is defined on
+$(\rset^{d})^{N} \times \{1,\ldots,N\}\times \{0,\ldots,K\} \times \rset^{d}$ by 
+\begin{equation}\label{eq:def_measpi_N}
+  \bar{\measpi}(\rmd x^{1:N},i,k,\rmd y)  =   N^{-1} \breve{\measpi}(\rmd x^i,k,\rmd y)  \textstyle{\prod_{j=1\, 
+  , j\neq i}^N \rho(\rmd x^{j})} \eqsp, % \w_k(x^i) \likelihood(\transfo^{k}(x^i)) \updelta_{\transfo^k(x^i)} (\rmd y)  \textstyle{\prod_{j=1}^N \rho(\rmd x^{j})} / (N \const) \eqsp.
+\end{equation}
+where $\breve{\measpi}$ is itself a probability measure on
+$\rset^{d}\times \{0,\ldots,K\} \times \rset^{d}$ given by $\breve{\measpi}( \rmd x, k, \rmd y) =  \const^{-1} \rho(\rmd x) \w_k(x) \likelihood(\transfo^{k}(x)) \updelta_{\transfo^k(x)} (\rmd y)$ and satisfies $ \breve{\measpi}(\rmd y)=\sum_{k \in \zset} \int \breve{\measpi}( \rmd x, k, \rmd y)=\measpi(\rmd y)$.
+%\arnaud{I think it is really crucial to show explicitly that $\bar{\measq}(\rmd y)=\pi(\rmd y)$. So i put it back in.}
+%\begin{equation*}
+%   %\label{eq:def_bmeaspi}
+%   \breve{\measpi}( \rmd x, k, \rmd y) =  \const^{-1} \rho(\rmd x) \w_k(x) \likelihood(\transfo^{k}(x)) %\updelta_{\transfo^k(x)} (\rmd y),~ \text{with}~\breve{\measpi}(\rmd y):=\sum_{k \in \zset} \int \breve{\measpi}( %\rmd x, k, \rmd y)=\measpi(\rmd y).
+%\end{equation*}
+For example, IFMH described in \Cref{algo:IMH} can be shown to be an independent MH using the following extended  independent proposal on 
+$(\rset^{d})^{N} \times \{1,\ldots,N\}\times \{0,\ldots,K\} \times \rset^{d}$
+\begin{equation}\label{eq:extendedproposal}
+  \bar{\measq}(\rmd x^{1:N},i,k,\rmd y)=p_k^i~\updelta_{\transfo^{k}(x^{i})}(\rmd y) \textstyle{\prod_{j=1}^{N}\rho(\rmd x^{j})} \eqsp,
+%&  =   \bar{\measpi}^N_g(\rmd x^{1:N},i,k,\rmd y) (\const_g/\estConst^N_g(x^{1:N})) \eqsp.  
+\end{equation} where  $p_k^i$ is defined in \eqref{eq:def_estimator_normal_const}  
+and its acceptance probability follows from the identity,
+\begin{equation}\label{eq:rationextendedtargetproposal}
+  (\rmd\bpi/\rmd \bmeasq)(x^{1:N},i,k,y)=\estConstC{x^{1:N}}/Z \eqsp,
+\end{equation}
+for $\estConstC{x^{1:N}}$ defined in \eqref{eq:def_estimator_normal_const}. Similarly, we show that IFG described in \Cref{algo:gibbs_partial} is a partially collapsed Gibbs sampler targeting \eqref{eq:def_measpi_N}.
+% Regarding the Indeed, sampling $\tilde{Y}$ from this distribution is equivalent to Step 1-Step 2 of \Cref{algo:IMH} and we can additionally check that the Radon-Nikodym derivative between these two distributions satisfies\arnaud{maybe this should be detailed as this is really key}
+% where $p_k^i$ is defined in \eqref{eq:def_estimator_naive_monte_carlo}. The acceptance probability in Step 3 of  \Cref{algo:IMH}  follows directly.
+
+%****We need to add the proof of validity of the Gibbs algorithm here***
+
+%It can similarly checked that the `local' partially collapsed Gibbs sampler targets the modified extended target
+%\begin{align}
+%  \label{eq:def_measpi_N_gibbs}
+%  \bar{\measpi} (\rmd x^{1:N},i,k,\rmd y)  &=  N^{-1} \breve{\measpi}(\rmd x^i,k,\rmd y)  \textstyle{\{\prod_{j= i}^{N} M(x^j,\rmd x^{j+1})\}\{\prod_{j= 1}^{i-1} M(x^{j+1},\rmd x^{j})\}} \eqsp,
+%\end{align}
+%which also satisfies $  \bar{\measpi} (\rmd y)= \pi(\rmd y)$ by \Cref{corollary:inv_kernel} and \eqref{eq:kernel}.
+
+% is now modified, as $\bar{\measpi}^N(\rmd x^{1:N}| (i,k,y)) = \updelta_{\transfo^{-k}(y)}(\rmd
+% x^i)\textstyle{\{\prod_{j= i}^{N-1} M(x^j,\rmd x^{j+1})\}M(x^N, \rmd x^1)\{\prod_{j= 1}^{i-2} M(x^j,\rmd x^{j+1})\}}$. Sampling $X^{1:N} $ The rest stays untouched. By picking $M$ appropriately, we propose new particles close to the ``active'' particle $X^I$.
+% Note here that a sensible algorithm would balance out contribution from a kernel $M$ to propose local moves from the active particle and the prior $\rho$ to ensure that we explore all possible modes of the posterior distribution $\pi$.
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{comment}
+\subsection{MCMC schemes}
+Henceforth we assume that \Cref{assumption:z_ne_finite} is satisfied. In this section, we describe novel MCMC algorithms to sample from $\pi$ that leverage the IFIS estimators $\estConstC{X^{1:N}}$ and $\hatpi{X^{1:N}}$ presented in \Cref{subsec:NISestimators}.
+The first algorithm we propose, the Invertible Flow Metropolis--Hastings (IFMH) is an independent MH algorithm that defines a Markov chain $(X^{1:N}_n,Y_n)_{n \geq 0}$ by the recursion given in \Cref{algo:IMH}. At each iteration
+compute an empirical distribution $\hat{\pi}_{\tilde{X}^{1:N}}$ \eqref{eq:def_estimator_naive_monte_carlo} associated with 
+$\tilde{X}^{i}\overset{\text{iid}}{\sim}\rho$ independently from the past, and
+then sample a proposal $Y\sim \hat{\pi}_{\tilde{X}^{1:N}}$. The marginal
+distribution of $Y$ is thus given by the expectation of
+$\hat{\pi}_{X^{1:N}}$ w.r.t. $X^{1:N}$ and is intractable. However, an auxiliary variable trick allows us to bypass this issue and compute an acceptance probability that guarantees that the
+algorithm admits $\pi$ as the invariant distribution.
+\begin{algorithm}
+\SetAlgoLined
+At step
+$n \in \nset$, given $(X^{1:N}_n,Y_n)$.
+\begin{enumerate}[wide, labelwidth=!, labelindent=0pt, label=(\arabic*)]
+\item Sample $\tilde{X}_i\overset{\text{iid}}{\sim} \rho$ for $i\in[N]$ and compute the IFIS estimators $\hat{\pi}_{\tilde{X}^{1:N}}$ and $\estConstC{\tilde{X}^{1:N}}$.
+\item Sample $\tilde{Y}\sim \hat{\pi}_{\tilde{X}_{1:N}}$.
+\item
+With probability
+$$\min\left\{1,\estConstC{\tilde{X}^{1:N}}/\estConstC{X^{1:N}_{n}}\right\},$$
+set $(X^{1:N}_{n+1},Y_{n+1})=(\tilde{X}^{1:N},\tilde{Y})$. Otherwise set  $(X^{1:N}_{n+1},Y_{n+1})=(X^{1:N}_{n},Y_{n})$.
+\end{enumerate}
+\caption{Invertible Flow Metropolis-Hastings Sampler}
+\label{algo:IMH}
+\end{algorithm}
+\\This algorithm is akin to the particle independent MH proposed in \cite{andrieu2010particle} but its proof of validity relies on a different construction.
+
+We now propose the Invertible Flow Gibbs (IFG) sampler which is a partially collapsed Gibbs algorithm \citep{liu:1993,vandyk:park:2008} that is applicable as soon as $N\geq 2$. It defines a Markov chain $(X^{1:N}_n,I_n,K_n,Y_n)_{n \in\nset}$  by the recursion described in \Cref{algo:gibbs_partial}. 
+\begin{algorithm}
+  \SetAlgoLined
+At step
+$n \in \nset$, given $(X^{1:N}_n,I_n,K_n,Y_n)$.
+\begin{enumerate}[wide, labelwidth=!, labelindent=0pt, label=(\arabic*)]
+\item \label{algo:gibbs_partial_1} Set $X^{I_n}_{n+1} = X^{I_n}_{n}$ and for any
+  $i \in [N]\setminus \{I_n\}$, sample $X^{i}_{n+1}\overset{\text{iid}}{\sim} \rho$.
+\item Sample the path index $I_{n+1}$  with probability proportional to
+$(\estConstC{X_{n+1}^{i}})_{i \in [N]}$.
+\item Sample location $K_{n+1}$ on the path  $I_{n+1}$ with probability proportional to $$\{w_k(X^{I_{n+1}}_{n+1})
+L(\transfo^k(X^{I_{n+1}}_{n+1}))/ \estConstC{X_{n+1}^{I_{n+1}}}\}_{k\in\zset}\eqsp,$$ and set $Y_{n+1} =\transfo^{K_{n+1}}(X^{I_{n+1}}_{n+1})$. 
+\end{enumerate}
+\caption{Invertible Flow Gibbs Sampler}
+\label{algo:gibbs_partial}
+\end{algorithm}
+\\IFG can be extended by replacing independent proposal in \ref{algo:gibbs_partial_1} with reversible Markov proposals w.r.t. $\rho$; see \Cref{sec:supp:proof_mcmc}. 
+
+\subsection{Validity}
+We only sketch here how one can establish  the validity of these MCMC schemes described above; details can be found in \Cref{sec:supp:proof_mcmc}. The proof consists of showing that IFMH, respectively IFG, is a ``standard'' independent Metropolis-Hastings (MH), respectively partially collapsed Gibbs sampler, acting on an extended target distribution $\bpi$ which admits $\pi$ as one of its marginal. Hence sampling from $\bpi$ also provides samples from $\pi$.
+
+This extended target $\bar{\measpi}$ is defined on
+$(\rset^{d})^{N} \times \{1,\ldots,N\}\times \zset \times \rset^{d}$ by 
+\begin{equation}\label{eq:def_measpi_N}
+  \bar{\measpi}(\rmd x^{1:N},i,k,\rmd y)  =   N^{-1} \breve{\measpi}(\rmd x^i,k,\rmd y)  \textstyle{\prod_{j=1\, 
+  , j\neq i}^N \rho(\rmd x^{j})} \eqsp, % \w_k(x^i) \likelihood(\transfo^{k}(x^i)) \updelta_{\transfo^k(x^i)} (\rmd y)  \textstyle{\prod_{j=1}^N \rho(\rmd x^{j})} / (N \const) \eqsp.
+\end{equation}
+where $\breve{\measpi}$ is itself a probability measure on
+$\rset^{d}\times \zset \times \rset^{d}$ given by $\breve{\measpi}( \rmd x, k, \rmd y) =  \const^{-1} \rho(\rmd x) \w_k(x) \likelihood(\transfo^{k}(x)) \updelta_{\transfo^k(x)} (\rmd y)$ and satisfies $ \breve{\measpi}(\rmd y)=\sum_{k \in \zset} \int \breve{\measpi}( \rmd x, k, \rmd y)=\measpi(\rmd y)$.
+%\arnaud{I think it is really crucial to show explicitly that $\bar{\measq}(\rmd y)=\pi(\rmd y)$. So i put it back in.}
+%\begin{equation*}
+%   %\label{eq:def_bmeaspi}
+%   \breve{\measpi}( \rmd x, k, \rmd y) =  \const^{-1} \rho(\rmd x) \w_k(x) \likelihood(\transfo^{k}(x)) %\updelta_{\transfo^k(x)} (\rmd y),~ \text{with}~\breve{\measpi}(\rmd y):=\sum_{k \in \zset} \int \breve{\measpi}( %\rmd x, k, \rmd y)=\measpi(\rmd y).
+%\end{equation*}
+For example, IFMH described in \Cref{algo:IMH} can be shown to be an independent MH using the following extended  independent proposal on 
+$(\rset^{d})^{N} \times \{1,\ldots,N\}\times \zset \times \rset^{d}$
+\begin{equation}\label{eq:extendedproposal}
+  \bar{\measq}(\rmd x^{1:N},i,k,\rmd y)=p_k^i~\updelta_{\transfo^{k}(x^{i})}(\rmd y) \textstyle{\prod_{j=1}^{N}\rho(\rmd x^{j})} \eqsp,
+%&  =   \bar{\measpi}^N_g(\rmd x^{1:N},i,k,\rmd y) (\const_g/\estConst^N_g(x^{1:N})) \eqsp.  
+\end{equation} where  $p_k^i$ is defined in \eqref{eq:def_estimator_naive_monte_carlo}  
+and its acceptance probability follows from the identity,
+\begin{equation}\label{eq:rationextendedtargetproposal}
+  (\rmd\bpi/\rmd \bmeasq)(x^{1:N},i,k,y)=\estConstC{x^{1:N}}/Z \eqsp,
+\end{equation}
+for $\estConstC{x^{1:N}}$ defined in \eqref{eq:def_estimator_normal_const}. Similarly, we show that IFG described in \Cref{algo:gibbs_partial} is a partially collapsed Gibbs sampler targeting \eqref{eq:def_measpi_N}.
+% Regarding the Indeed, sampling $\tilde{Y}$ from this distribution is equivalent to Step 1-Step 2 of \Cref{algo:IMH} and we can additionally check that the Radon-Nikodym derivative between these two distributions satisfies\arnaud{maybe this should be detailed as this is really key}
+% where $p_k^i$ is defined in \eqref{eq:def_estimator_naive_monte_carlo}. The acceptance probability in Step 3 of  \Cref{algo:IMH}  follows directly.
+
+%****We need to add the proof of validity of the Gibbs algorithm here***
+
+%It can similarly checked that the `local' partially collapsed Gibbs sampler targets the modified extended target
+%\begin{align}
+%  \label{eq:def_measpi_N_gibbs}
+%  \bar{\measpi} (\rmd x^{1:N},i,k,\rmd y)  &=  N^{-1} \breve{\measpi}(\rmd x^i,k,\rmd y)  \textstyle{\{\prod_{j= i}^{N} M(x^j,\rmd x^{j+1})\}\{\prod_{j= 1}^{i-1} M(x^{j+1},\rmd x^{j})\}} \eqsp,
+%\end{align}
+%which also satisfies $  \bar{\measpi} (\rmd y)= \pi(\rmd y)$ by \Cref{corollary:inv_kernel} and \eqref{eq:kernel}.
+
+% is now modified, as $\bar{\measpi}^N(\rmd x^{1:N}| (i,k,y)) = \updelta_{\transfo^{-k}(y)}(\rmd
+% x^i)\textstyle{\{\prod_{j= i}^{N-1} M(x^j,\rmd x^{j+1})\}M(x^N, \rmd x^1)\{\prod_{j= 1}^{i-2} M(x^j,\rmd x^{j+1})\}}$. Sampling $X^{1:N} $ The rest stays untouched. By picking $M$ appropriately, we propose new particles close to the ``active'' particle $X^I$.
+% Note here that a sensible algorithm would balance out contribution from a kernel $M$ to propose local moves from the active particle and the prior $\rho$ to ensure that we explore all possible modes of the posterior distribution $\pi$.
+
+\subsection{Experimental results}
+\label{sec:exps}
+\arnaud{this should go to the experiments section}
+We demonstrate the IFG sampler on challenging distributions. We compare the mixing properties of our algorithm versus Hamiltonian Monte Carlo (HMC) using the same number of gradient evaluations. While both HMC and IFG use Hamiltonian dynamics, this dynamics being dampled for IFG, IFG sampler provides a much faster mixing algorithm, successfully exploring different modes of the target distribution. %We are computing a chain of 40 000 samples for each method. 
+Our first example is a target introduced in \cite{pmlr-v37-rezende15}. For IFG, we use $N=4$, $a(k)=\indiacc{-40,\cdots,40}(k)$, $h=0.1$ and $\gamma=3$. We plot in the following the reconstructed distributions for IFG and HMC, and the corresponding autocorrelation functions (ACF) w.r.t. the number of gradient evaluations. Even if IFG requires more gradient evaluation per step, it still outperform HMC (here with 20 leapfrog steps and different step sizes) in terms of ACF. 
+  \begin{figure}[h!]
+    \centering
+    \begin{minipage}{0.23\textwidth}
+      \includegraphics[width=\linewidth]{code/pics/rezende_hmc_05.pdf}
+    \end{minipage}
+    \begin{minipage}{0.23\textwidth}
+      \includegraphics[width= \linewidth]{code/pics/rezende_ifis.pdf}
+    \end{minipage}  
+    \begin{minipage}{0.52\textwidth}
+      \includegraphics[width= \linewidth]{code/pics/acf_ifis_hmc_rezende.pdf}
+    \end{minipage}
+    \caption{From left to right, density estimates of target from \cite{pmlr-v37-rezende15} obtained after running 10,000 samples of HMC and IFG, and ACF for both those methods.}
+    \label{fig:toy_example_rezende}
+  \end{figure}
+
+Our second example is a mixture of 8 highly peaked Gaussian displayed in a row in dimension 4. IFG again outperforms HMC in terms of ACF.  %We finally illustrate our claim on a strongly correlated Gaussian, following \cite{Neal2011} and \cite{levy:hoffman:sohl}. This is a Gaussian with diagonal covariances $10^2, 10^{-2}$ rotated by a factor $\pi/4$. While regular HMC will have trouble as it is not axis aligned, we show that our method can adapt easily to such a geometry.
+\begin{figure}[h!]
+    \centering
+    \begin{minipage}{0.49\textwidth}
+      \includegraphics[width=\linewidth]{code/pics/acf_ifis_hmc_gauss.pdf}
+    \caption{ACF for a mixture of 8 highly peaked Gaussian}
+    \label{fig:acf_8_gaussian}
+    \end{minipage}
+    \begin{minipage}{0.49\textwidth}
+      \includegraphics[width=\linewidth]{code/pics/acf_ifis_hmc_gauss.pdf}
+    \caption{Placeholder: ACF for a strongly correlated Gaussian}
+    \label{fig:acf_8_gaussian}
+    \end{minipage}
+\end{figure}
+\end{comment}
+%\input{elbo}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

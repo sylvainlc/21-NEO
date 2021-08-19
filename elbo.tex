@@ -1,0 +1,16 @@
+For some data $\boldsymbol{x} \in \mathcal{X}$, we consider the likelihood model 
+$$p_\theta(\boldsymbol{x}) = \int_{\rset^d} p_\theta(\boldsymbol{x},z) \rmd z = \int_{\rset^d} p_\theta(\boldsymbol{x}|z)p_\theta(z) \rmd z$$
+Where $p_\theta(z)$ is some prior distribution for the latent variable $z$, which we can access easily.
+Given some data $\boldsymbol{x}$, $p_\theta(\boldsymbol{x})$ is the normalizing constant of the posterior distribution of $z$. In particular, we can access an unbiased estimator of this constant, given some diffeomorphism $\Phi_{\phi, \theta}$ parameterized in $\theta$ and with some additional parameters $\phi$, $T \in \nset^* $ , using the framework above:
+$$\hat{p}_\theta(y;\boldsymbol{x}) = \sum_{k\in \zset} w_k(y) p_\theta (\boldsymbol{x},\Phi_{\phi, \theta}^k(y)) \eqsp.$$
+Typically, $\Phi_{\phi, \theta}$ can be the dissipative Hamiltonian operator associated with the posterior $p_\theta(\cdot|\boldsymbol{x})$. This estimator is unbiased, which means that $\int_{\rset^d} \hat{p_\theta}(y,\boldsymbol{x}) p_\theta(y) \rmd y = p_\theta(\boldsymbol{x}) $.
+In that case, we can apply Jensen's inequality to compute the evidence lower bound (ELBO):
+\begin{align*}
+    \ELBO(\phi, \theta;\boldsymbol{x}) = \int_{\rset^d} \log\left(\hat{p}_\theta(y;\boldsymbol{x})\right) p_\theta(y) \rmd y \leq \log\left({p}_\theta(\boldsymbol{x})\right) \eqsp,
+\end{align*}
+the right hand side being the quantity we wish to maximize. 
+We can further write
+\begin{align*}
+    \ELBO(\phi, \theta;\boldsymbol{x})& = \int_{\rset^d} \log\left(\hat{p}_\theta(y;\boldsymbol{x})\right) p_\theta(y) \rmd y \\
+    &= \int_{\rset^d} \log\left(\sum_{k\in \zset} w_k(y) p_\theta (\boldsymbol{x},\Phi_{\phi, \theta}^k(y))\right) p_\theta(y) \rmd y \eqsp.
+\end{align*}

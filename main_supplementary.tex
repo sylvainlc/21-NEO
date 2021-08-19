@@ -1,0 +1,212 @@
+
+
+
+\documentclass{article}
+
+\usepackage{icml2021}
+
+\usepackage{graphicx}
+\graphicspath{ {./pics/} }
+\input{header}
+\input{def}
+% Recommended, but optional, packages for figures and better typesetting:
+
+% The \icmltitle you define below is probably too long as a header.
+% Therefore, a short form for the running title is supplied here:
+\icmltitlerunning{}
+
+
+\setcounter{equation}{0}
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\setcounter{page}{1}
+ \renewcommand{\thesection}{S\arabic{section}}
+ \renewcommand{\theequation}{S\arabic{equation}}
+ \renewcommand{\thefigure}{S\arabic{figure}}
+ \renewcommand{\thetheorem}{S\arabic{theorem}}
+ \renewcommand{\thelemma}{S\arabic{lemma}}
+ \renewcommand{\theproposition}{S\arabic{proposition}}
+
+ \usepackage{xr}
+\externaldocument{main}
+
+
+\begin{document}
+
+\onecolumn
+\icmltitle{Invertible Flow Non Equilibrium sampling - {\normalsize SUPPLEMENTARY DOCUMENT}}
+
+
+\icmlsetsymbol{equal}{*}
+
+\icmlsetsymbol{equal}{*}
+
+\begin{icmlauthorlist}
+  \icmlauthor{Achille Thin}{ecole}
+  \icmlauthor{Yazid Janati}{tsp}
+  \icmlauthor{Sylvain Le Corff}{tsp, ecole}
+  \icmlauthor{Charles Ollion}{ecole}
+  \icmlauthor{Arnaud Doucet}{oxford}
+  \icmlauthor{Alain Durmus}{ens, lagrange}
+  \icmlauthor{Eric Moulines}{ecole,lagrange}
+  \icmlauthor{Christian Robert}{dauphine,warwick}
+\end{icmlauthorlist}
+
+\icmlaffiliation{ecole}{CMAP, Ecole Polytechnique, Institut Polytechnique de Paris, 91128 Palaiseau, France}
+
+\icmlaffiliation{tsp}{T\'el\'ecom SudParis,Institut Polytechnique de Paris }
+
+
+\icmlaffiliation{oxford}{University of Oxford}
+
+\icmlaffiliation{ens}{Ecole Nationale Sup\'erieure Paris-Saclay, France}
+
+\icmlaffiliation{lagrange}{Centre de recherche Lagrange en mathematiques et calcul}
+
+\icmlaffiliation{dauphine}{University Paris Dauphine, PSL}
+
+\icmlaffiliation{warwick}{University of Warwick}
+
+\icmlcorrespondingauthor{Achille Thin}{achille.thin@polytechnique.edu}
+
+\input{supplementaryIFIS}
+
+
+\section{Proofs of \Cref{sec:infine:MCMC}}
+\label{sec:supp:proof_mcmc}
+\input{supplementaryMCMC}
+
+\section{Additional details about the experiments}
+% \subsection{Description of the transformation chosen}
+% \textcolor{red}{To be completed.} 
+% 1/Introduce modified transformation
+% In this section, we illustrate how the parameters $K, \gamma, h, \mass$ influence the results. First notice that as the dimension $d$ grows, the possibilities become limited since $w_k(x) \propto \rho(\transfo^k(x))e^{-\gamma h k d}$: setting relatively high values for $K, \gamma$ and $h$ at the same time will result in small weights for orbits far down the path, hence, a trade-off needs to be made.\\
+% With a slight modification of the operator $\transfo_h$ defined in \Cref{subsec:NISestimators}, long trajectories can be achieved with a relatively small step-size $h$. Indeed, consider instead the following operator $\tilde{\transfo}_h$ defined as 
+% \[\tilde{\transfo}_h(q,p) = (q+h\mass_{\transfo}^{-1}\{ \rme^{-h\gamma} p -h \nabla U(q)\}, \rme^{-h \gamma } p -h \nabla U(q))\eqsp\]
+% where the mass matrix $\mass$ has been replaced by a covariance matrix $\mass_{\transfo}$. The rationale behind this modified version is that if $h$ is too small and the momentum has relatively large variance $\sigma^2_p$ (associated with better exploration), $h\mass^{-1}\{ \rme^{-h\gamma} p -h \nabla U(q)\}$ might have small magnitude and the particles will not move around enough. 
+% If instead $\mass$ is replaced with a matrix $\mass_{\transfo}$ such that $h\mass_{\transfo}$
+% 2/discuss how now we choose $\mass$ an$\mass_{\transfo}$.
+\subsection{Additional experiments}
+
+In this section, we consider the target Funnel distribution, following \cite{jia2020normalizing}.
+The dimension $d$ is set to 16, and the target distribution is
+\[
+\pi(x) = \Normal(x_1; 0, a^2)\prod_{i=2}^d \Normal(x_i; 0,\rme^{2bx_1})\eqsp,
+\]
+with $a= 1$ and $b=0.5$ and  where $x=(x_1,\dots, x_d)$. 
+ The normalizing constant of $\pi$ is thus $Z=1$ here. \IFIS\ is used to estimate $Z$ and obtain samples approximately distributed according to $\target$. % with the \IFIS\ sampler. \Cref{fig:funnel_samples} displays the empirical histograms obtained by a  run of the No U-Turn Sampler (NUTS), the Hamiltonian Monte Carlo algorithm and \InFiNE\ sampler.
+A reliable choice for the mass matrix and the step-size of \InFiNE\ is obtained by running a warm-up chain of the adaptive HMC or NUTS algorithm given by the Pyro framework which provides estimates of those parameters \cite{bingham2019pyro}. %and thus use the estimated mass matrix and step-size \cite{bingham2019pyro}.
+%The step size and the mass matrix of HMC are adapted during the HMC run by the Pyro framework \cite{bingham2019pyro}. 
+ Therefore, we set the mass matrix and the step size for \InFiNE\ to those provided by the Pyro adaptive scheme.
+%HMC and \IFIS\ share the same step size, mass matrix and 
+The length $K$ of the trajectories of the \IFIS\ sampler is set to the number of leapfrog steps of the HMC algorithm, here $K=10$.
+
+
+
+We draw $n = 10^4$ samples and compare them to  $10^6$ samples from  NUTS.
+We also compare these to $K\cdot 10^4 = 10^5$ samples drawn with ISIR. The prior distribution is chosen as a centered Gaussian with variance $\sigma^2\mathbf{I}_d$ with $\sigma^2=4$. The results of \IFIS\ and HMC are similar. Note however that \IFIS\ lends itself easily to  parallel implementations: conformal Hamiltonian integration of the $N$ paths, which is the main computational bottleneck, can be parallelized.\\ 
+\begin{figure}[!ht]
+\caption{Empirical histograms of samples from the Funnel distribution.
+From left to right, target distribution (very long run of NUTS), ISIR, HMC and \InFiNE}
+    \label{fig:funnel_samples}
+    \centering
+    \begin{tabular}{cccc}
+       \includegraphics[width=.22\linewidth]{pics/histogram_true_funnel1.pdf}
+         &  
+          \includegraphics[width=.22\linewidth]{pics/histogram_isir_funnel1.pdf}
+          &
+           \includegraphics[width=.22\linewidth]{pics/histogram_nuts_funnel1.pdf}
+           &
+            \includegraphics[width=.22\linewidth]{pics/histogram_infine_funnel2.pdf}
+    \end{tabular}
+\end{figure}
+We also present the normalizing constant estimation of this distribution. We initialize the mass matrix and the step-size as discussed previously, and compare IS, AIS, and \InFiNE\ schemes.
+The IS estimator is run with $2\cdot 10^5$ samples.
+For the \IFIS\ estimator, the number of samples is $N = 2\cdot 10^4$ and the trajectory length is $K=10$. The AIS estimator is run with $2\cdot 10^4$ samples, with the annealing scheme presented in \citep[Section 6.2]{grosse2015sandwiching} of length $K=50$. Moreover, the parameters of the HMC transitions in AIS (mass matrix, step-size) are set to the estimated parameters of the HMC algorithm in Pyro. 
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.7 \linewidth]{pics/funnel.pdf}
+    \label{fig:funnel_estimation}
+    \caption{200 independent estimations of the normalizing constant of $\pi$. The prior used is a centered Gaussian distribution with $4\mathbf{I}_d$ as covariance matrix. The true value is $Z=1$ (red line). The figure displays the median (square) and the interquartile range (solid lines) in each case.}
+\end{figure}
+\input{supplementaryVAE}
+
+
+\section{Connection with Nested sampling}
+
+%%%%%\subsection{Computing Normalizing constant}
+
+We return here to the problem of computing the normalizing constant $\const$ of the target density $\pi(x) =\rho(x)\likelihood(x)/\const$ to point out a simplification induced by our method compared to the method proposed in \cite{rotskoff:vanden-eijden:2019}.
+The method proposed in \cite{rotskoff:vanden-eijden:2019} uses the identity
+\begin{equation}\label{eq:nesting}    \const=\int \int_{0}^{\infty}\1(\likelihood(x)> \ell)\rho(x) \rmd \ell \rmd x =\int_0^\infty \mathbb{P}_{X\sim\rho}(\likelihood(X)> \ell) \rmd \ell\eqsp,
+\end{equation}
+which was instrumental in the construction of nested sampling
+\cite{skilling2006nested,chopin:robert:2010}. Using identical level sets as \cite{skilling2006nested}, of the form $\mso:=\{x:\likelihood(x)>\ell\}$ with $\ell>0$ and their dissipative Langevin dynamics, \citep[Equation 13]{rotskoff:vanden-eijden:2019} obtain a concise estimator of the volume of these level sets based on the length of the path $(\transfo^k(X^i))_{k\in\mathbb N}$ remaining inside $\mso$. (This estimator is constructed under a uniform prior assumption and continuous-time integrator, but the argument in \cite{rotskoff:vanden-eijden:2019} easily translates to discrete-time.)
+
+Considering instead \IFIS, it provides an approximation of $\mathbb{P}_{X\sim\rho}(\likelihood(X)> \ell)$ for
+a fixed $\ell$, but a more efficient resolution is available, which bypasses repeated approximations induced by the quadrature version of both \cite{skilling2006nested,rotskoff:vanden-eijden:2019}. The crux of the improvement is that paths only need be simulated once, using only the stopping time associated with the lowest positive $\ell$ found in early simulations. Integration over the likelihood levels $\ell$ can then be accomplished with no further approximation. Using a single stopping time as indicated earlier, the following is an unbiased estimator of $\PP_{X\sim\rho}(\likelihood(X)> \ell)$ for all values of $\ell$: 
+\begin{equation}
+\widehat{\PP}_{X\sim\rho}(\likelihood(X)> \ell) =\frac{1}{N} \sum_{i=1}^N 
+ \sum_{k=0}^K \indiacc{\likelihood(\transfo^{k}(X^i))> \ell} \w_k(X^i)\eqsp,
+ \qquad
+X^{i}\stackrel{\text{iid}}{\sim}\rho\eqsp,
+\end{equation}
+where the weights $\w_k(X^i)$, defined in \eqref{eq:w_k_first_def}, incorporate the stopping times. Integrating the above over $\ell\in\mathbb{R}^+$ as in \eqref{eq:nesting} leads to an estimator of the normalizing constant $\const$:
+\begin{align}\label{eq:nolevel}
+\widehat{\const}_{X^{1:N}} &=\frac{1}{N}\sum_{i=1}^{N} \sum_{k=0}^{K}  \int_{\mathbb{R}^+} 
+ \mathbb{I}(\likelihood(\transfo^{k}(X^i))> \ell) \w_k(X^i) \rmd \ell\nonumber\\
+ &= \frac{1}{N}\sum_{i=1}^{N} 
+ \sum_{k=0}^K\likelihood(\transfo^k(X^i)) \w_k(x^i)\eqsp,
+\end{align}
+where we used the slice sampling identity 
+\[ 
+ \int_{\mathbb{R}^+} \indiacc{\likelihood(\transfo^{k}(x))> \ell} \rmd \ell=\likelihood(\transfo^{k}(x))\eqsp.
+\]
+In conclusion, the \IFIS~estimator of $\const$ coincides with the conformal Hamiltonian version of nested sampling with the additional benefit of removing the quadrature approximation.
+(Note that, as suggested \Cref{remark1}, we could resort to both forward and backward push-forward rather than starting at $k=0$, which could only improve the precision of the estimator \eqref{eq:nolevel}.)
+
+
+\begin{comment}
+\subsection{Approximate sampling from the target}
+We have
+\begin{align*}
+    \int_\Omega \dummy(x) \rho(x) L(x) \rmd x&= \int_{L_{\min}}^{L_{\max}} \int_\Omega  \dummy(x) \rho(x) \delta_{\{x:L(x)=L\}}(\rmd x)~L \rmd L\\
+    &=  \int_{\rset^+} \frac{\int_\Omega \dummy (x) \rho(x) \delta_{\{x:L(x)=L\}}(\rmd x)}{\int_\Omega \rho(x) \delta_{\{x:L(x)=L\}}(\rmd x)}    \int_\Omega \rho(x) \delta_{\{x:L(x)=L\}}(\rmd x)~L \rmd L\\
+    &=  \int_{\rset^+} \int_\Omega \dummy(x) \eta_L(\rmd x) \int_\Omega \rho(x) \delta_{\{x:L(x)=L\}}(\rmd x)~L \rmd L,
+\end{align*}
+where $\eta_L$ is the probability measure on the level set $\{x:L(x)=L\}$ defined by 
+\begin{align*}
+    \int_\Omega \dummy(x) \eta_L(\rmd x)&= \frac{\int_\Omega \dummy (x) \rho(x) \delta_{\{x:L(x)=L\}}(\rmd x)}{\int_\Omega \rho(x) \delta_{\{x:L(x)=L\}}(\rmd x)},
+\end{align*}
+and the derivative $V'(L)$ of $V(L)$ w.r.t. $L$ is 
+$V'(L)=-\int_\Omega \rho(x) \delta_{\{x:L(x)=L\}}(\rmd x)$. Note that notations are not consistent in \cite{rotskoff:vanden-eijden:2019} as $V(L)$ is decreasing w.r.t. $L$ whereas in the previous section $V(E)$ is increasing w.r.t. $E$.
+We also have
+\begin{align*}
+ Z=\int_\Omega \rho(x) L(x) \rmd x&=\int_{\rset^+} V(L)\rmd L\\
+                                 &=- \int_{\rset^+} L V'(L)\rmd L.
+\end{align*}
+So overall, we have
+\begin{align*}
+    \int_\Omega \dummy(x) \pi(x) \rmd x&=\frac{\int_{\rset^+} \int_\Omega \dummy(x) \eta_L(\rmd x)~ V'(L)L \rmd L}{\int_{\rset^+} V'(L)L \rmd L}\\
+    &=-\frac{\int_{\rset^+} \int_\Omega \dummy(x) \eta_L(\rmd x)~ V'(L)L \rmd L}{\int_{\rset^+} V(L) \rmd L}
+\end{align*}
+
+Hence we can can sample from $\pi$ by first sampling $L \sim \lambda(\cdot)$ where $\lambda(L)\propto V'(L)L$ then $X\sim \eta_L(\cdot)$. 
+
+This suggests that to sample 
+approximately from $\pi$ using the algorithm output, we can sample from 
+\begin{align*}
+    \hat{\lambda}(\rmd L) \propto \sum_{i=1}^N \frac{\sum_{k=\tau_{T}^{-}( X^i)+1}^{\tau_{T}^{+}( X^i)-1} \rho\left(\phi^{k}( X^i)\right)|\Jac{\phi^{k}}( X^i)|L(\phi^{k}( X^i)) \delta_{L(\phi^{k}( X^i))}(\rmd L)}{ \sum_{j=\tau_{T}^-( X^i)+1}^{\tau_{T}^+( X^i)-1}  \rho(\phi^{j}( X^i)) |\Jac{\phi^{j}}( X^i)|}
+\end{align*}
+and sampling $X\sim \hat{\eta}_{L}$ corresponds to setting $X=\phi^k(X^i)$ such that $L=L(\phi^{k}( X^i))$ (under mild assumptions this point is unique). So by combining both 
+kernels, we simply obtain
+\begin{align*}
+    \hat{\pi}_{X^{1:N}}(\rmd x) \propto \sum_{i=1}^N \frac{\sum_{k=\tau_{T}^{-}( X^i)+1}^{\tau_{T}^{+}( X^i)-1} \rho\left(\phi^{k}( X^i)\right)|\Jac{\phi^{k}}( X^i)|L(\phi^{k}( X^i)) \delta_{\phi^{k}( X^i)}(\rmd x)}{ \sum_{j=\tau_{T}^-( X^i)+1}^{\tau_{T}^+( X^i)-1}  \rho(\phi^{j}( X^i)) |\Jac{\phi^{j}}( X^i)|}
+\end{align*}
+\end{comment}
+\bibliography{bibliography}
+\bibliographystyle{icml2021}
+
+\end{document}
+
+
